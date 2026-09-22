@@ -1,0 +1,11 @@
+VEOR Cursor Handoff
+Version: 0.4.0-dev.1
+Built: 2026-09-22
+Node gate: v22.16.0
+Tests: 42/42 pass
+Primary continuation file: CURSOR_HANDOFF.md
+Cursor rules: .cursor/rules/00-veor.mdc
+Cursor MCP self-test: .cursor/mcp.json
+Current sandbox on build host: process fallback (bubblewrap/docker/podman unavailable)
+Public-release status: developer preview; P0 items remain before beta
+Commit: 97f769f01b8c

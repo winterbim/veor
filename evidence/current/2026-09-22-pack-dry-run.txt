@@ -1,0 +1,62 @@
+npm notice
+npm notice package: veor-runtime@0.4.0-dev.1
+npm notice Tarball Contents
+npm notice 1.9kB CONSTITUTION.md
+npm notice 6.3kB CURSOR_HANDOFF.md
+npm notice 1.7kB ENGINEERING.md
+npm notice 1.1kB LICENSE
+npm notice 7.2kB README.md
+npm notice 1.2kB SECURITY.md
+npm notice 776B docs/adr/0001-runtime-boundary.md
+npm notice 683B docs/adr/0002-monotonic-authority.md
+npm notice 505B docs/adr/0003-proof-after-effect.md
+npm notice 3.5kB docs/ARCHITECTURE.md
+npm notice 1.9kB docs/ROADMAP.md
+npm notice 2.0kB docs/SECURITY_MATRIX.md
+npm notice 3.1kB docs/THREAT_MODEL.md
+npm notice 2.7kB examples/demo.js
+npm notice 3.2kB examples/filesystem-demo.js
+npm notice 408B examples/mcp/advisory.js
+npm notice 1.6kB examples/mcp/mock-server.js
+npm notice 1.4kB package.json
+npm notice 669B policies/default.policy.json
+npm notice 1.5kB src/canonical.js
+npm notice 2.9kB src/cli.js
+npm notice 502B src/decision.js
+npm notice 1.4kB src/executor.js
+npm notice 1.4kB src/failure-guard.js
+npm notice 2.9kB src/file-ledger.js
+npm notice 3.2kB src/filesystem-executor.js
+npm notice 5.0kB src/grants.js
+npm notice 1.5kB src/index.js
+npm notice 2.3kB src/kernel/decision-kernel.js
+npm notice 1.9kB src/kernel/service.js
+npm notice 572B src/kernel/stdio.js
+npm notice 1.5kB src/ledger.js
+npm notice 1.1kB src/mcp/advisory-provider.js
+npm notice 1.2kB src/mcp/catalog-guard.js
+npm notice 9.5kB src/mcp/gateway.js
+npm notice 174B src/mcp/stdio.js
+npm notice 4.5kB src/policy-bundle.js
+npm notice 4.1kB src/policy.js
+npm notice 3.5kB src/reflex.js
+npm notice 3.8kB src/runtime.js
+npm notice 1.7kB src/sandbox/bubblewrap-sandbox.js
+npm notice 582B src/sandbox/detect.js
+npm notice 976B src/sandbox/index.js
+npm notice 2.7kB src/sandbox/process-sandbox.js
+npm notice 4.5kB src/security/approval-store.js
+npm notice 2.1kB src/security/persistent-ledger.js
+npm notice 1.1kB src/security/receipt-signer.js
+npm notice 748B src/security/redact.js
+npm notice Tarball Details
+npm notice name: veor-runtime
+npm notice version: 0.4.0-dev.1
+npm notice filename: veor-runtime-0.4.0-dev.1.tgz
+npm notice package size: 34.3 kB
+npm notice unpacked size: 111.0 kB
+npm notice shasum: 85d7021ddf43b794c92ade4cfca6a92a27d44e43
+npm notice integrity: sha512-TBkbnoiHCkRPm[...]4NLEmToADh1Fg==
+npm notice total files: 48
+npm notice
+veor-runtime-0.4.0-dev.1.tgz

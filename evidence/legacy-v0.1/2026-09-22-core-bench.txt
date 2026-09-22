@@ -1,0 +1,26 @@
+
+> veor-runtime@0.1.0 bench
+> node bench/core-bench.js
+
+{
+  "scope": "deterministic policy path only",
+  "includes": [
+    "Ed25519 grant verification",
+    "constraint checks",
+    "advisory thresholding",
+    "proposal hashing"
+  ],
+  "excludes": [
+    "model inference",
+    "tool execution",
+    "network",
+    "disk persistence"
+  ],
+  "runs": 20000,
+  "elapsedMs": 5485.725,
+  "meanMicroseconds": 274.286,
+  "opsPerSecond": 3646,
+  "runtime": "v22.16.0",
+  "platform": "linux/x64",
+  "note": "local self-benchmark; not third-party verified"
+}

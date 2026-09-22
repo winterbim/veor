@@ -1,0 +1,266 @@
+
+> veor-runtime@0.4.0-dev.1 check
+> node --check src/*.js && node --check src/kernel/*.js && node --check src/mcp/*.js && node --check src/sandbox/*.js && node --check src/security/*.js && node --check examples/*.js && node --check examples/mcp/*.js && node --test
+
+TAP version 13
+# Subtest: one-shot approval is proposal-bound and replay resistant
+ok 1 - one-shot approval is proposal-bound and replay resistant
+  ---
+  duration_ms: 7.717878
+  type: 'test'
+  ...
+# Subtest: approval signature cannot be reused for altered args
+ok 2 - approval signature cannot be reused for altered args
+  ---
+  duration_ms: 1.872683
+  type: 'test'
+  ...
+# Subtest: catalog guard baselines then detects tool drift
+ok 3 - catalog guard baselines then detects tool drift
+  ---
+  duration_ms: 8.133379
+  type: 'test'
+  ...
+# Subtest: gateway passes safe read and blocks reviewed write before downstream
+ok 4 - gateway passes safe read and blocks reviewed write before downstream
+  ---
+  duration_ms: 106.312244
+  type: 'test'
+  ...
+# Subtest: unknown tool is denied before downstream
+ok 5 - unknown tool is denied before downstream
+  ---
+  duration_ms: 95.571001
+  type: 'test'
+  ...
+# Subtest: gateway consumes a signed REVIEW approval exactly once
+ok 6 - gateway consumes a signed REVIEW approval exactly once
+  ---
+  duration_ms: 101.190023
+  type: 'test'
+  ...
+# Subtest: persistent ledger detects tail truncation via external head
+ok 7 - persistent ledger detects tail truncation via external head
+  ---
+  duration_ms: 3.346971
+  type: 'test'
+  ...
+# Subtest: unknown MCP tools fail closed
+ok 8 - unknown MCP tools fail closed
+  ---
+  duration_ms: 1.609316
+  type: 'test'
+  ...
+# Subtest: write paths are bounded and explicit
+ok 9 - write paths are bounded and explicit
+  ---
+  duration_ms: 1.042954
+  type: 'test'
+  ...
+# Subtest: advisory ALLOW cannot weaken deterministic REVIEW
+ok 10 - advisory ALLOW cannot weaken deterministic REVIEW
+  ---
+  duration_ms: 0.205322
+  type: 'test'
+  ...
+# Subtest: execution receipt signature verifies and detects tampering
+ok 11 - execution receipt signature verifies and detects tampering
+  ---
+  duration_ms: 3.862599
+  type: 'test'
+  ...
+# Subtest: approval previews redact common secret fields
+ok 12 - approval previews redact common secret fields
+  ---
+  duration_ms: 1.313411
+  type: 'test'
+  ...
+# Subtest: sandbox detection reports a concrete strongest backend
+ok 13 - sandbox detection reports a concrete strongest backend
+  ---
+  duration_ms: 5.890461
+  type: 'test'
+  ...
+# Subtest: process fallback clearly reports no OS isolation
+ok 14 - process fallback clearly reports no OS isolation
+  ---
+  duration_ms: 3.149591
+  type: 'test'
+  ...
+# Subtest: requireOsIsolation refuses unsafe fallback
+ok 15 - requireOsIsolation refuses unsafe fallback
+  ---
+  duration_ms: 3.342875
+  type: 'test'
+  ...
+# Subtest: bubblewrap plan denies network and binds workspace when available conceptually
+ok 16 - bubblewrap plan denies network and binds workspace when available conceptually
+  ---
+  duration_ms: 0.653601
+  type: 'test'
+  ...
+# Subtest: canonical JSON is stable across object key order
+ok 17 - canonical JSON is stable across object key order
+  ---
+  duration_ms: 2.082893
+  type: 'test'
+  ...
+# Subtest: canonicalization rejects non-JSON values instead of silently collapsing them
+ok 18 - canonicalization rejects non-JSON values instead of silently collapsing them
+  ---
+  duration_ms: 0.395431
+  type: 'test'
+  ...
+# Subtest: canonicalization safely preserves a literal __proto__ key
+ok 19 - canonicalization safely preserves a literal __proto__ key
+  ---
+  duration_ms: 0.397074
+  type: 'test'
+  ...
+# Subtest: two identical failures block a third identical retry
+ok 20 - two identical failures block a third identical retry
+  ---
+  duration_ms: 1.256217
+  type: 'test'
+  ...
+# Subtest: changing the plan fingerprint permits a genuinely different attempt
+ok 21 - changing the plan fingerprint permits a genuinely different attempt
+  ---
+  duration_ms: 0.92466
+  type: 'test'
+  ...
+# Subtest: file ledger persists events and anchored head
+ok 22 - file ledger persists events and anchored head
+  ---
+  duration_ms: 15.559187
+  type: 'test'
+  ...
+# Subtest: file ledger external head detects tail truncation
+ok 23 - file ledger external head detects tail truncation
+  ---
+  duration_ms: 3.579043
+  type: 'test'
+  ...
+# Subtest: filesystem executor writes inside root and reports before/after
+ok 24 - filesystem executor writes inside root and reports before/after
+  ---
+  duration_ms: 9.155021
+  type: 'test'
+  ...
+# Subtest: filesystem executor blocks path traversal
+ok 25 - filesystem executor blocks path traversal
+  ---
+  duration_ms: 1.207615
+  type: 'test'
+  ...
+# Subtest: filesystem executor blocks symlink escape
+ok 26 - filesystem executor blocks symlink escape
+  ---
+  duration_ms: 1.180125
+  type: 'test'
+  ...
+# Subtest: signed grants validate only for their bound subject/capability/tool and validity window
+ok 27 - signed grants validate only for their bound subject/capability/tool and validity window
+  ---
+  duration_ms: 6.076604
+  type: 'test'
+  ...
+# Subtest: tampering a grant payload invalidates its signature
+ok 28 - tampering a grant payload invalidates its signature
+  ---
+  duration_ms: 1.44837
+  type: 'test'
+  ...
+# Subtest: approvals bind to a proposal and forbid self-approval by default
+ok 29 - approvals bind to a proposal and forbid self-approval by default
+  ---
+  duration_ms: 2.210019
+  type: 'test'
+  ...
+# Subtest: evidence ledger verifies an intact chain
+ok 30 - evidence ledger verifies an intact chain
+  ---
+  duration_ms: 3.08092
+  type: 'test'
+  ...
+# Subtest: mutating a retained event breaks chain verification
+ok 31 - mutating a retained event breaks chain verification
+  ---
+  duration_ms: 1.113557
+  type: 'test'
+  ...
+# Subtest: deleting a middle event breaks the previous-hash linkage
+ok 32 - deleting a middle event breaks the previous-hash linkage
+  ---
+  duration_ms: 0.290106
+  type: 'test'
+  ...
+# Subtest: a trusted external head detects tail truncation
+ok 33 - a trusted external head detects tail truncation
+  ---
+  duration_ms: 0.342714
+  type: 'test'
+  ...
+# Subtest: missing capability grant fails closed
+ok 34 - missing capability grant fails closed
+  ---
+  duration_ms: 4.492626
+  type: 'test'
+  ...
+# Subtest: valid grant plus low-risk signals can allow
+ok 35 - valid grant plus low-risk signals can allow
+  ---
+  duration_ms: 2.828869
+  type: 'test'
+  ...
+# Subtest: high-risk advisory signal can only tighten an otherwise valid grant
+ok 36 - high-risk advisory signal can only tighten an otherwise valid grant
+  ---
+  duration_ms: 1.581886
+  type: 'test'
+  ...
+# Subtest: probabilistic safety cannot override deterministic denial
+ok 37 - probabilistic safety cannot override deterministic denial
+  ---
+  duration_ms: 1.359249
+  type: 'test'
+  ...
+# Subtest: signed independent approval may resolve review but never deterministic denial
+ok 38 - signed independent approval may resolve review but never deterministic denial
+  ---
+  duration_ms: 2.740849
+  type: 'test'
+  ...
+# Subtest: runtime executes only after policy allow and verifies separately
+ok 39 - runtime executes only after policy allow and verifies separately
+  ---
+  duration_ms: 6.84196
+  type: 'test'
+  ...
+# Subtest: runtime does not execute when advisory risk forces review
+ok 40 - runtime does not execute when advisory risk forces review
+  ---
+  duration_ms: 2.597149
+  type: 'test'
+  ...
+# Subtest: execution success without a true postcondition is not reported as verified
+ok 41 - execution success without a true postcondition is not reported as verified
+  ---
+  duration_ms: 1.618029
+  type: 'test'
+  ...
+# Subtest: malformed advisory probabilities fail conservatively instead of becoming safer
+ok 42 - malformed advisory probabilities fail conservatively instead of becoming safer
+  ---
+  duration_ms: 1.864061
+  type: 'test'
+  ...
+1..42
+# tests 42
+# suites 0
+# pass 42
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 534.108685

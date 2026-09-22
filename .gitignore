@@ -1,0 +1,7 @@
+node_modules/
+.veor/
+*.log
+.DS_Store
+.env
+.env.*
+!.env.example

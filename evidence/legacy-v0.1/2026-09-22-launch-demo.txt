@@ -1,0 +1,33 @@
+
+> veor-runtime@0.1.0 demo:fs
+> node examples/filesystem-demo.js
+
+{
+  "workspace": "/tmp/veor-demo-ufAviN",
+  "write": {
+    "outcome": "VERIFIED",
+    "executed": true,
+    "verified": true
+  },
+  "deleteAttempt": {
+    "outcome": "REVIEW",
+    "executed": false,
+    "reasons": [
+      "ADVISORY_HIGH_RISK",
+      "ADVISORY_DESTRUCTIVE",
+      "ADVISORY_IRREVERSIBLE",
+      "ADVISORY_REQUESTS_HUMAN",
+      "DEEP_DELIBERATION_REQUIRED_BUT_UNAVAILABLE"
+    ]
+  },
+  "protectedFileStillExists": "VEOR executed this effect.",
+  "ledger": {
+    "file": "/tmp/veor-demo-ufAviN/.veor/ledger.jsonl",
+    "headFile": "/tmp/veor-demo-ufAviN/.veor/ledger.jsonl.head",
+    "verification": {
+      "valid": true,
+      "head": "c62e03995833ce6af3182ae64dc2e7f6d04b6c069b77d26be1a514e819f9b45e",
+      "length": 9
+    }
+  }
+}

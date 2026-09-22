@@ -1,0 +1,5 @@
+---
+description: VEOR repository invariants and continuation rules
+alwaysApply: true
+---
+Read `CURSOR_HANDOFF.md` before non-trivial work. Preserve the authority monotonicity invariant: advisory/model decisions may only move ALLOW -> REVIEW -> DENY. Human approval may resolve REVIEW but never DENY. Never describe the process fallback as an OS sandbox. Add or update executable tests for security-relevant changes and run `npm run check` before reporting success.

@@ -1,0 +1,50 @@
+{
+  "name": "veor-runtime",
+  "version": "0.4.0-dev.1",
+  "type": "module",
+  "description": "A verifiable execution boundary for AI agents: deterministic policy, one-shot approval, MCP gateway, signed receipts and OS-aware sandboxing.",
+  "keywords": [
+    "ai-agents",
+    "agent-security",
+    "agent-runtime",
+    "tool-use",
+    "authorization",
+    "guardrails",
+    "mcp",
+    "evidence",
+    "ed25519"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "files": [
+    "src",
+    "examples",
+    "policies",
+    "docs",
+    "README.md",
+    "ENGINEERING.md",
+    "CONSTITUTION.md",
+    "SECURITY.md",
+    "CURSOR_HANDOFF.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "demo": "node examples/demo.js",
+    "demo:fs": "node examples/filesystem-demo.js",
+    "check": "node --check src/*.js && node --check src/kernel/*.js && node --check src/mcp/*.js && node --check src/sandbox/*.js && node --check src/security/*.js && node --check examples/*.js && node --check examples/mcp/*.js && node --test",
+    "prepublishOnly": "npm run check",
+    "bench": "node bench/core-bench.js",
+    "test:advanced": "node --test test/advanced/*.test.js",
+    "mcp": "node src/mcp/stdio.js",
+    "kernel": "node src/kernel/stdio.js",
+    "sandbox:info": "node src/cli.js sandbox-info"
+  },
+  "bin": {
+    "veor": "./src/cli.js",
+    "veor-mcp": "./src/mcp/stdio.js",
+    "veor-kernel": "./src/kernel/stdio.js"
+  },
+  "license": "MIT"
+}

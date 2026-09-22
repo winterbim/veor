@@ -1,0 +1,33 @@
+
+> veor-runtime@0.1.0 demo
+> node examples/demo.js
+
+{
+  "safe": {
+    "outcome": "VERIFIED",
+    "executed": true,
+    "verified": true
+  },
+  "risky": {
+    "outcome": "REVIEW",
+    "executed": false,
+    "reasons": [
+      "ADVISORY_HIGH_RISK",
+      "ADVISORY_DESTRUCTIVE",
+      "ADVISORY_IRREVERSIBLE",
+      "ADVISORY_REQUESTS_HUMAN",
+      "DEEP_DELIBERATION_REQUIRED_BUT_UNAVAILABLE"
+    ]
+  },
+  "finalState": {
+    "notes": [
+      "keep me",
+      "verified note"
+    ]
+  },
+  "evidence": {
+    "valid": true,
+    "head": "e6119dcca1ba3cfb3f2b06ae459df580c565729ffab9aff394103e5ccd5a7a34",
+    "length": 9
+  }
+}

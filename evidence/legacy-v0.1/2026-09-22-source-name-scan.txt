@@ -1,0 +1,2 @@
+Command: grep -RniE <source-name-patterns> . --exclude-dir=.git
+Result: no source-project names found

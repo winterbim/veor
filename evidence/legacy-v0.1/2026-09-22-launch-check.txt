@@ -1,0 +1,164 @@
+
+> veor-runtime@0.1.0 check
+> node --check src/*.js && node --check examples/*.js && node --test
+
+TAP version 13
+# Subtest: canonical JSON is stable across object key order
+ok 1 - canonical JSON is stable across object key order
+  ---
+  duration_ms: 1.650801
+  type: 'test'
+  ...
+# Subtest: canonicalization rejects non-JSON values instead of silently collapsing them
+ok 2 - canonicalization rejects non-JSON values instead of silently collapsing them
+  ---
+  duration_ms: 0.520187
+  type: 'test'
+  ...
+# Subtest: canonicalization safely preserves a literal __proto__ key
+ok 3 - canonicalization safely preserves a literal __proto__ key
+  ---
+  duration_ms: 0.399289
+  type: 'test'
+  ...
+# Subtest: two identical failures block a third identical retry
+ok 4 - two identical failures block a third identical retry
+  ---
+  duration_ms: 1.442271
+  type: 'test'
+  ...
+# Subtest: changing the plan fingerprint permits a genuinely different attempt
+ok 5 - changing the plan fingerprint permits a genuinely different attempt
+  ---
+  duration_ms: 0.315081
+  type: 'test'
+  ...
+# Subtest: file ledger persists events and anchored head
+ok 6 - file ledger persists events and anchored head
+  ---
+  duration_ms: 13.628254
+  type: 'test'
+  ...
+# Subtest: file ledger external head detects tail truncation
+ok 7 - file ledger external head detects tail truncation
+  ---
+  duration_ms: 9.108653
+  type: 'test'
+  ...
+# Subtest: filesystem executor writes inside root and reports before/after
+ok 8 - filesystem executor writes inside root and reports before/after
+  ---
+  duration_ms: 9.792447
+  type: 'test'
+  ...
+# Subtest: filesystem executor blocks path traversal
+ok 9 - filesystem executor blocks path traversal
+  ---
+  duration_ms: 1.182238
+  type: 'test'
+  ...
+# Subtest: signed grants validate only for their bound subject/capability/tool and validity window
+ok 10 - signed grants validate only for their bound subject/capability/tool and validity window
+  ---
+  duration_ms: 8.582742
+  type: 'test'
+  ...
+# Subtest: tampering a grant payload invalidates its signature
+ok 11 - tampering a grant payload invalidates its signature
+  ---
+  duration_ms: 2.137498
+  type: 'test'
+  ...
+# Subtest: approvals bind to a proposal and forbid self-approval by default
+ok 12 - approvals bind to a proposal and forbid self-approval by default
+  ---
+  duration_ms: 4.570191
+  type: 'test'
+  ...
+# Subtest: evidence ledger verifies an intact chain
+ok 13 - evidence ledger verifies an intact chain
+  ---
+  duration_ms: 2.43774
+  type: 'test'
+  ...
+# Subtest: mutating a retained event breaks chain verification
+ok 14 - mutating a retained event breaks chain verification
+  ---
+  duration_ms: 0.623659
+  type: 'test'
+  ...
+# Subtest: deleting a middle event breaks the previous-hash linkage
+ok 15 - deleting a middle event breaks the previous-hash linkage
+  ---
+  duration_ms: 0.691664
+  type: 'test'
+  ...
+# Subtest: a trusted external head detects tail truncation
+ok 16 - a trusted external head detects tail truncation
+  ---
+  duration_ms: 0.333835
+  type: 'test'
+  ...
+# Subtest: missing capability grant fails closed
+ok 17 - missing capability grant fails closed
+  ---
+  duration_ms: 4.536174
+  type: 'test'
+  ...
+# Subtest: valid grant plus low-risk signals can allow
+ok 18 - valid grant plus low-risk signals can allow
+  ---
+  duration_ms: 3.372572
+  type: 'test'
+  ...
+# Subtest: high-risk advisory signal can only tighten an otherwise valid grant
+ok 19 - high-risk advisory signal can only tighten an otherwise valid grant
+  ---
+  duration_ms: 1.614835
+  type: 'test'
+  ...
+# Subtest: probabilistic safety cannot override deterministic denial
+ok 20 - probabilistic safety cannot override deterministic denial
+  ---
+  duration_ms: 1.780976
+  type: 'test'
+  ...
+# Subtest: signed independent approval may resolve review but never deterministic denial
+ok 21 - signed independent approval may resolve review but never deterministic denial
+  ---
+  duration_ms: 2.860943
+  type: 'test'
+  ...
+# Subtest: runtime executes only after policy allow and verifies separately
+ok 22 - runtime executes only after policy allow and verifies separately
+  ---
+  duration_ms: 13.191127
+  type: 'test'
+  ...
+# Subtest: runtime does not execute when advisory risk forces review
+ok 23 - runtime does not execute when advisory risk forces review
+  ---
+  duration_ms: 4.825425
+  type: 'test'
+  ...
+# Subtest: execution success without a true postcondition is not reported as verified
+ok 24 - execution success without a true postcondition is not reported as verified
+  ---
+  duration_ms: 2.234309
+  type: 'test'
+  ...
+# Subtest: malformed advisory probabilities fail conservatively instead of becoming safer
+ok 25 - malformed advisory probabilities fail conservatively instead of becoming safer
+  ---
+  duration_ms: 2.442655
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 313.988659

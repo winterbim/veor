@@ -1,0 +1,30 @@
+{
+  "kind": "veor.policy/v1",
+  "name": "default-deny",
+  "filesystem": {
+    "readRoots": ["."],
+    "writeRoots": [".veor/output"]
+  },
+  "mcp": {
+    "denyUnknownTools": true,
+    "requireAnnotations": true,
+    "tools": {
+      "filesystem.read_file": {
+        "decision": "ALLOW",
+        "capability": "filesystem.read",
+        "readPathArgs": ["path"]
+      },
+      "filesystem.write_file": {
+        "decision": "REVIEW",
+        "capability": "filesystem.write",
+        "writePathArgs": ["path"],
+        "requireExplicitWritePath": true
+      }
+    }
+  },
+  "sandbox": {
+    "backend": "auto",
+    "network": "deny",
+    "requireOsIsolation": false
+  }
+}

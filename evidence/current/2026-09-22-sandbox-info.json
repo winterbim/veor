@@ -1,0 +1,7 @@
+{
+  "platform": "linux",
+  "bwrap": false,
+  "docker": false,
+  "podman": false,
+  "strongestLocal": "process"
+}
