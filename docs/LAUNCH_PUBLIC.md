@@ -33,9 +33,9 @@ VEOR remains a **developer preview** until P0 in `CURSOR_HANDOFF.md` is done.
 ## Day-J actions
 
 1. [x] Public GitHub repository exists: https://github.com/winterbim/veor
-2. [ ] Push `master` once CI is green locally: `npm run check && npm run demo`.
-3. [ ] Apply description + topics; enable Issues + private vulnerability reporting.
-4. [ ] Cut annotated tag/release `v0.4.0-dev.1` from `RELEASE_NOTES.md` — label clearly as **developer preview**.
+2. [x] Pushed `master` after local `npm run check && npm run demo` (42/42 + live DENY/REVIEW/ALLOW+receipt).
+3. [x] Description + topics applied via `gh`; Issues enabled. Private vulnerability reporting: configure in GitHub Security settings if not already.
+4. [x] Annotated tag/release `v0.4.0-dev.1` (prerelease) from `RELEASE_NOTES.md`.
 5. [ ] Human distribution: post once in a relevant venue (MCP / agent-security community) with a link to `npm run demo` and an explicit non-claim: not production-certified; external review PENDING.
 
 ## Do not do on day J
