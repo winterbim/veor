@@ -1,4 +1,4 @@
-# VEOR 0.4.0-dev.3 — developer preview
+# VEOR 0.4.0-dev.4 — developer preview
 
 **Status:** developer preview · not a security certification · not production-safe.
 
@@ -6,15 +6,18 @@ Public repository: https://github.com/winterbim/veor
 
 ## What this tag contains
 
-- Everything in 0.4.0-dev.2.
-- Bubblewrap `osEnforced` stays false when `bwrap` fails during setup (GitHub-hosted runners: `RTM_NEWADDR` / loopback). A payload that actually runs inside the namespace can still report `osEnforced: true`.
-- MCP gateway process exits when the client closes stdin (also on `v0.4.0-dev.2`).
+- Everything in 0.4.0-dev.3.
+- Cursor shell hook in this repo is default-deny except single maintenance commands. A terminal outside Cursor is still uncovered.
+- Bubblewrap seccomp filter: `sethostname` returns EPERM. `seccomp: true` only if the payload started.
+- Landlock helper denies writes outside the granted directory when gcc and the kernel ABI exist.
+- Official MCP SDK 1.30.0 stdio transport. Latest protocol it negotiates is 2025-11-25.
+- Internal review: `docs/INTERNAL_SECURITY_REVIEW.md`. External review remains PENDING.
 
 ## Explicit non-claims
 
-- External security review: **PENDING** (`DEV_EVIDENCE.md`) — not simulated.
-- Same-user bypass: unrestricted shell outside the host hook is not covered.
-- Host isolation: no seccomp/Landlock/gVisor/microVM in this build. Bubblewrap network unshare is best-effort and is not claimed when setup fails.
-- Do not market as “production-safe”, “unbreakable”, or “complete sandbox” (`LAUNCH.md`, `SECURITY.md`).
+- Not an external audit.
+- Not MCP 2026-07-28.
+- Not a full syscall allowlist, gVisor, or microVM.
+- Do not market as “production-safe”.
 
-See `CURSOR_HANDOFF.md` for remaining P0 work before calling the project beta.
+Show HN draft, for a human to post: `docs/SHOW_HN.md`.

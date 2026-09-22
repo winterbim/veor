@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { ProcessSandbox } from './process-sandbox.js';
+import { openSeccompProfile } from './seccomp-profile.js';
 
 function bindIfExists(args, source, dest = source) { if (fs.existsSync(source)) args.push('--ro-bind', source, dest); }
 
@@ -17,8 +18,9 @@ export class BubblewrapSandbox extends ProcessSandbox {
     // Capability intent only. Per-exec results set osEnforced after bwrap actually starts.
     return { backend:'bubblewrap', isolation:'namespace', osEnforced:false, networkIsolated:this.network !== 'allow', filesystemIsolated:true, noNewPrivileges:true, note:'osEnforced becomes true only after a successful bubblewrap spawn' };
   }
-  buildArgv(argv, { cwd = this.workspace } = {}) {
+  buildArgv(argv, { cwd = this.workspace, seccomp = false } = {}) {
     const b = ['bwrap','--die-with-parent','--new-session','--unshare-user','--unshare-pid','--unshare-ipc','--unshare-uts','--unshare-cgroup-try','--proc','/proc','--dev','/dev','--tmpfs','/tmp'];
+    if (seccomp) b.push('--seccomp', '3');
     if (this.network !== 'allow') b.push('--unshare-net');
     for (const sys of ['/usr','/bin','/sbin','/lib','/lib64','/etc']) bindIfExists(b, sys);
     const allRead = new Set([this.workspace, ...this.readRoots]);
@@ -29,7 +31,18 @@ export class BubblewrapSandbox extends ProcessSandbox {
     return b;
   }
   async exec(argv, options = {}) {
-    const result = await super.exec(this.buildArgv(argv, options), { ...options, cwd: '/' });
+    const useSeccomp = options.seccomp !== false && (process.arch === 'x64' || process.arch === 'arm64');
+    const profile = useSeccomp ? openSeccompProfile() : null;
+    let result;
+    try {
+      result = await super.exec(this.buildArgv(argv, { ...options, seccomp: Boolean(profile) }), {
+        ...options,
+        cwd: '/',
+        stdioExtra: profile ? [profile.fd] : [],
+      });
+    } finally {
+      profile?.cleanup();
+    }
     // Honest: isolation counts only after bubblewrap is running the payload.
     // A setup failure (for example loopback RTM_NEWADDR on locked-down CI kernels)
     // is bwrap itself, not an in-namespace exit, and must not set osEnforced.
@@ -41,6 +54,7 @@ export class BubblewrapSandbox extends ProcessSandbox {
       backend: 'bubblewrap',
       isolation: started ? 'namespace' : 'none',
       osEnforced: started,
+      seccomp: started && Boolean(profile),
       networkIsolated: started && this.network !== 'allow',
       filesystemIsolated: started,
       noNewPrivileges: started,

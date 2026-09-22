@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0-dev.4 — 2026-09-23
+
+- Cursor `beforeShellExecution` in this repo is default-deny except single maintenance commands. A terminal outside Cursor is still uncovered.
+- Bubblewrap loads a seccomp filter that returns EPERM for `sethostname`. `seccomp: true` only after the payload starts.
+- Landlock helper (`src/sandbox/landlock-exec.c`) restricts writes to granted directories when the kernel and gcc can build it.
+- Official MCP SDK 1.30.0 stdio transport (`src/mcp/sdk-stdio.js`). Negotiated protocol is the SDK's own set, latest 2025-11-25, not 2026-07-28. 1.25.2 had a cross-client data-leak advisory; this pin audits clean.
+- Internal security notes in `docs/INTERNAL_SECURITY_REVIEW.md`. External review remains PENDING.
+
 ## 0.4.0-dev.3 — 2026-09-23
 
 - Bubblewrap setup failures (including GitHub-hosted `RTM_NEWADDR` / loopback) keep `osEnforced: false`.

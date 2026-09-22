@@ -2,7 +2,7 @@
 
 This file separates executed gates from unverified claims. A green local gate is not an independent security audit.
 
-## Current 0.4.0-dev.2 gate
+## Current 0.4.0-dev.4 gate
 
 | Claim | Gate | Current status |
 |---|---|---|
@@ -22,10 +22,13 @@ This file separates executed gates from unverified claims. A green local gate is
 | Catalog baseline detects changed tool surface | catalog-guard test | CAPTURED_PASS |
 | Self-dogfood ALLOW+DENY receipts + offline verify + tamper fail | `npm run self` + `npm run verify:self` | CAPTURED_PASS |
 | Secret broker: effect sees secret; receipt/logs do not | secret-broker tests + self secret_probe | CAPTURED_PASS |
-| Host hook denies gated repo effect without valid receipt | host-hook tests (executed in CI) | CAPTURED_PASS |
+| Host hook denies ordinary shell without a receipt; allows maintenance commands | host-hook tests | CAPTURED_PASS |
+| Seccomp denies sethostname inside bubblewrap when the namespace actually starts | sandbox-hardening test | CAPTURED_PASS when bwrap can sethostname |
+| Landlock helper denies writes outside the granted directory | sandbox-hardening test | CAPTURED_PASS when gcc and Landlock ABI exist |
+| Official MCP SDK 1.30.0 stdio transport denies an unprofiled tool | sdk-gateway test | CAPTURED_PASS |
 | Independent external security review | external reviewer | PENDING |
-| Official MCP 2026-07-28 SDK conformance | future P0.1 gate | PENDING |
-| seccomp/Landlock/gVisor/microVM hardening | future P0.3/P1 gates | PENDING |
+| MCP protocol 2026-07-28 | not in SDK 1.30.0 (latest negotiated: 2025-11-25) | NOT CLAIMED |
+| Full syscall allowlist, gVisor, microVM | seccomp profile is sethostname-only | NOT CLAIMED |
 | Full product secret-broker (cross-tool named handles) | broader than self-probe | PENDING |
 
 Fresh raw artefacts for the handoff are generated under `evidence/current/` by `npm run demo` / `npm run self` (gitignored receipts).

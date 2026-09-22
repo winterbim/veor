@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { hashObject } from '../canonical.js';
@@ -33,7 +34,7 @@ export class ProcessSandbox {
   describe() {
     return { backend: 'process', isolation: 'none', osEnforced: false, networkIsolated: false, filesystemIsolated: false };
   }
-  async exec(argv, { cwd = this.cwd, env = {}, timeoutMs = this.timeoutMs } = {}) {
+  async exec(argv, { cwd = this.cwd, env = {}, timeoutMs = this.timeoutMs, stdioExtra = [] } = {}) {
     if (!Array.isArray(argv) || !argv.length || argv.some(x => typeof x !== 'string')) throw new Error('argv must be a non-empty string array');
     const safeEnv = {};
     for (const key of this.envAllowlist) if (process.env[key] != null) safeEnv[key] = process.env[key];
@@ -41,8 +42,12 @@ export class ProcessSandbox {
     const startedAt = new Date().toISOString();
     const stdout = boundedCollector(this.maxOutputBytes);
     const stderr = boundedCollector(this.maxOutputBytes);
+    const stdio = ['ignore', 'pipe', 'pipe', ...stdioExtra];
     return await new Promise((resolve) => {
-      const child = spawn(argv[0], argv.slice(1), { cwd: path.resolve(cwd), env: safeEnv, stdio: ['ignore', 'pipe', 'pipe'], shell: false });
+      const child = spawn(argv[0], argv.slice(1), { cwd: path.resolve(cwd), env: safeEnv, stdio, shell: false });
+      for (const extra of stdioExtra) {
+        if (typeof extra === 'number') { try { fs.closeSync(extra); } catch { /* parent copy only */ } }
+      }
       child.stdout.on('data', c => stdout.push(c)); child.stderr.on('data', c => stderr.push(c));
       let timedOut = false;
       const timer = setTimeout(() => { timedOut = true; child.kill('SIGKILL'); }, timeoutMs);

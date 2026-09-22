@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: '22'
       - name: Install bubblewrap (honest OS isolation backend when available)
-        run: sudo apt-get update && sudo apt-get install -y bubblewrap
+        run: sudo apt-get update && sudo apt-get install -y bubblewrap build-essential
       - name: Install (zero runtime deps; lockfile only)
         run: npm ci || npm install
       - name: Parse + test gate

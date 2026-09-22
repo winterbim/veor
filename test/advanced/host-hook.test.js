@@ -39,6 +39,36 @@ test('repo effect gate denies missing receipt and accepts a valid signed receipt
   assert.equal(toHookResponse(allowed).permission, 'allow');
 });
 
+test('Cursor host hook denies an ordinary shell command without a receipt', () => {
+  const input = JSON.stringify({ command: 'rm -rf /' });
+  const run = spawnSync(process.execPath, [hookPath], {
+    cwd: root,
+    input,
+    encoding: 'utf8',
+  });
+  assert.equal(run.status, 2);
+  const out = JSON.parse(run.stdout.trim().split(/\r?\n/).filter(Boolean).at(-1));
+  assert.equal(out.permission, 'deny');
+});
+
+test('Cursor host hook allows a maintenance command and rejects a chained one', () => {
+  const allowed = spawnSync(process.execPath, [hookPath], {
+    cwd: root,
+    input: JSON.stringify({ command: 'npm run check' }),
+    encoding: 'utf8',
+  });
+  assert.equal(allowed.status, 0, allowed.stderr);
+  assert.equal(JSON.parse(allowed.stdout.trim().split(/\r?\n/).filter(Boolean).at(-1)).permission, 'allow');
+
+  const chained = spawnSync(process.execPath, [hookPath], {
+    cwd: root,
+    input: JSON.stringify({ command: 'npm run check && rm -rf /' }),
+    encoding: 'utf8',
+  });
+  assert.equal(chained.status, 2);
+  assert.equal(JSON.parse(chained.stdout.trim().split(/\r?\n/).filter(Boolean).at(-1)).permission, 'deny');
+});
+
 test('Cursor host hook script denies gated shell without receipt (CI-executed)', () => {
   const input = JSON.stringify({
     command: 'node scripts/veor-gated-effect.js --tool filesystem.read_file -- -- echo hi',

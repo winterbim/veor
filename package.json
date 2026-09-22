@@ -1,6 +1,6 @@
 {
   "name": "veor-runtime",
-  "version": "0.4.0-dev.3",
+  "version": "0.4.0-dev.4",
   "type": "module",
   "description": "A verifiable execution boundary for AI agents: deterministic policy, one-shot approval, MCP gateway, signed receipts and OS-aware sandboxing.",
   "repository": {
@@ -60,7 +60,11 @@
   "bin": {
     "veor": "./src/cli.js",
     "veor-mcp": "./src/mcp/stdio.js",
+    "veor-mcp-sdk": "./src/mcp/sdk-stdio.js",
     "veor-kernel": "./src/kernel/stdio.js"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0"
+  }
 }

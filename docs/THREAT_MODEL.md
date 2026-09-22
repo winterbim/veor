@@ -36,13 +36,13 @@ The embedded runtime keeps execution and postcondition verification separate. Ge
 ### Evidence tampering
 The persistent ledger hashes each event against its predecessor and writes an external local head. This detects retained-event mutation, middle deletion and anchored tail truncation. An attacker able to replace both ledger and anchor is outside the local-only guarantee; remote anchoring is planned.
 
-### Hostile child process
-The process fallback is explicitly non-isolated (`osEnforced: false`). On Linux, when `bwrap` is installed and the Bubblewrap backend successfully starts a child, that effect reports `osEnforced: true`; if bubblewrap fails to spawn, the result does not claim OS isolation. The preview does not yet include a seccomp profile, Landlock rules, gVisor or microVM backend.
-
 ### Same-user bypass
-VEOR only controls actions routed through it. A coding agent with a separate unrestricted shell or filesystem tool can bypass an MCP-only deployment. Host policy/hooks or OS isolation are required to reduce that bypass.
+VEOR only controls actions routed through it. A coding agent with a separate unrestricted shell or filesystem tool can bypass an MCP-only deployment.
 
-For this repository, `.cursor/hooks.json` + `src/host/repo-effect-gate.js` reduce bypass on the **agent/MCP/npm-script surface** that matches gated commands (`veor-gated`, `VEOR_REQUIRE_RECEIPT`, `scripts/veor-gated-effect.js`): those effects are denied without a valid VEOR receipt. An unrestricted same-user shell that never hits that hook is still outside the guarantee.
+For this repository, `.cursor/hooks.json` runs `beforeShellExecution` on every shell command (`failClosed: true`). Maintenance commands (`npm test`, `npm run check|demo|self|verify`, `git status|diff|log`, `node --test`) are allowed only as a single command with no shell metacharacters. Every other shell command is denied unless `VEOR_EFFECT_RECEIPT` verifies. An unrestricted same-user shell that never enters Cursor — a terminal, another IDE, `ssh` — is still outside the guarantee.
+
+### Hostile child process
+The process fallback is explicitly non-isolated (`osEnforced: false`). On Linux, when `bwrap` starts the child, that effect reports `osEnforced: true` and `seccomp: true` for a filter that returns EPERM on `sethostname`. If bubblewrap fails during setup, neither flag is set. Landlock is a separate helper (`src/sandbox/landlock-exec.c`): it is enforced only when the helper compiles and `landlock_restrict_self` succeeds. There is no gVisor or microVM backend.
 
 ## Explicit non-claims
 
@@ -52,7 +52,7 @@ VEOR 0.4 developer preview does **not** claim:
 - complete protection against same-user bypass;
 - secure remote attestation;
 - HSM-grade key storage;
-- full MCP 2026-07-28 conformance yet;
+- full MCP 2026-07-28 conformance yet (official SDK 1.30.0 negotiates up to 2025-11-25);
 - classifier correctness;
 - regulatory certification;
 - public transparency logging;

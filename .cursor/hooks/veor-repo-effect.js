@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 /**
  * Cursor host hook for VEOR dogfood.
- * Event: beforeShellExecution / beforeMCPExecution (JSON on stdin).
- *
- * Policy for THIS repo's agent surface:
- * - Commands that look like gated repo effects (veor-gated / VEOR_REQUIRE_RECEIPT)
- *   are denied unless a valid receipt + public key are supplied via env.
- * - Ordinary shell is allowed through (threat model: same-user shell outside
- *   this hook is still not covered — see docs/THREAT_MODEL.md).
+ * beforeShellExecution in this repo is default-deny.
+ * Maintenance commands with no shell metacharacters are allowed.
+ * Every other shell command needs a valid VEOR receipt in the environment.
+ * A shell that never enters this hook (terminal outside Cursor) is still uncovered.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { gateRepoEffect, toHookResponse } from '../../src/host/repo-effect-gate.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const MAINTENANCE = /^(npm (test|run (check|demo|self|verify|verify:self|sandbox:info))|git (status|diff|log)( [A-Za-z0-9_.=/@+-]+)*|node --test( [A-Za-z0-9_.=/@+-]+)*)$/;
 
 function readStdin() {
   return new Promise((resolve) => {
@@ -37,12 +35,10 @@ function loadReceiptFromEnv() {
   return { receipt, publicKeyPem };
 }
 
-function isGatedCommand(command) {
-  const text = String(command ?? '');
-  if (process.env.VEOR_REQUIRE_RECEIPT === '1') return true;
-  if (/\bveor-gated\b/.test(text)) return true;
-  if (/scripts\/veor-gated-effect\.js/.test(text)) return true;
-  return false;
+function isMaintenance(command) {
+  const text = String(command ?? '').trim();
+  if (!text || /[;&|`$<>\n]|\$(?:\(|\{)/.test(text)) return false;
+  return MAINTENANCE.test(text);
 }
 
 const raw = await readStdin();
@@ -56,7 +52,7 @@ try {
 const command = input.command ?? input.tool_input?.command ?? '';
 const tool = input.tool_name ?? input.toolName ?? process.env.VEOR_EFFECT_TOOL ?? null;
 
-if (!isGatedCommand(command) && process.env.VEOR_REQUIRE_RECEIPT !== '1') {
+if (!String(command).trim() || isMaintenance(command)) {
   process.stdout.write(JSON.stringify({ permission: 'allow' }) + '\n');
   process.exit(0);
 }
