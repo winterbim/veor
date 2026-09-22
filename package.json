@@ -3,6 +3,14 @@
   "version": "0.4.0-dev.1",
   "type": "module",
   "description": "A verifiable execution boundary for AI agents: deterministic policy, one-shot approval, MCP gateway, signed receipts and OS-aware sandboxing.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/winterbim/veor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/winterbim/veor/issues"
+  },
+  "homepage": "https://github.com/winterbim/veor#readme",
   "keywords": [
     "ai-agents",
     "agent-security",
@@ -26,12 +34,15 @@
     "ENGINEERING.md",
     "CONSTITUTION.md",
     "SECURITY.md",
+    "LAUNCH.md",
+    "DEV_EVIDENCE.md",
     "CURSOR_HANDOFF.md",
     "LICENSE"
   ],
   "scripts": {
     "test": "node --test",
-    "demo": "node examples/demo.js",
+    "demo": "node examples/boundary-demo.js",
+    "demo:runtime": "node examples/demo.js",
     "demo:fs": "node examples/filesystem-demo.js",
     "check": "node --check src/*.js && node --check src/kernel/*.js && node --check src/mcp/*.js && node --check src/sandbox/*.js && node --check src/security/*.js && node --check examples/*.js && node --check examples/mcp/*.js && node --test",
     "prepublishOnly": "npm run check",

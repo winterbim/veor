@@ -12,4 +12,4 @@ Before any public beta:
 - [ ] receipt verification CLI exists
 - [ ] SBOM/provenance/release signing configured
 - [ ] independent reviewer attacks the boundary and records findings
-- [ ] demo shows both a safe allowed action and a risky action blocked *before* downstream effect
+- [x] demo shows both a safe allowed action and a risky action blocked *before* downstream effect (`npm run demo` → `examples/boundary-demo.js`)

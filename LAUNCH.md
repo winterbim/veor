@@ -9,3 +9,5 @@ The credible public thesis is:
 A strong launch should wait for the P0 beta boundary in `CURSOR_HANDOFF.md`, especially official MCP SDK v2 transport and hardened Linux isolation. Until then, publish only as a developer preview if public feedback is useful.
 
 Never use claims such as “unbreakable”, “production-safe”, “complete sandbox”, “prevents all agent damage”, or “nobody has thought of this before”.
+
+For the GitHub day-J human checklist (topics, description, preflight commands), see `docs/LAUNCH_PUBLIC.md`. Engineering beta gates remain in `PUBLISH_CHECKLIST.md`.

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "veor-selftest": {
+      "command": "node",
+      "args": ["REPLACE_WITH_ABSOLUTE_PATH/src/mcp/stdio.js"],
+      "env": {
+        "VEOR_POLICY": "REPLACE_WITH_ABSOLUTE_PATH/veor.policy.json",
+        "VEOR_RUNTIME_DIR": "REPLACE_WITH_ABSOLUTE_PATH/.veor/claude-runtime",
+        "VEOR_DOWNSTREAM_JSON": "[\"node\",\"REPLACE_WITH_ABSOLUTE_PATH/examples/mcp/mock-server.js\"]",
+        "VEOR_ADVISORY_MODULE": "REPLACE_WITH_ABSOLUTE_PATH/examples/mcp/advisory.js"
+      }
+    }
+  }
+}
