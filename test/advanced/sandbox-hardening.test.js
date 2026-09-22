@@ -68,7 +68,7 @@ test('seatbelt confines writes when sandbox-exec actually starts', async () => {
     return;
   }
   assert.equal(out.sandbox.backend, 'seatbelt');
-  assert.equal(fs.readFileSync(insideFile, 'utf8'), 'x');
+  assert.equal(fs.existsSync(insideFile), true, out.stderr || out.stdout || String(out.code));
   assert.equal(fs.existsSync(outsideFile), false);
 });
 

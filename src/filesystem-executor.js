@@ -1,8 +1,18 @@
-import { mkdir, readFile, rm, stat, writeFile, realpath } from 'node:fs/promises';
+import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import fs from 'node:fs';
 import path from 'node:path';
 
+function pathKey(value) {
+  const resolved = path.resolve(value);
+  return process.platform === 'win32' ? resolved.replace(/^\\\\\?\\/, '').toLowerCase() : resolved;
+}
+
 function insideRoot(root, candidate) {
+  const rootKey = pathKey(root);
+  const candidateKey = pathKey(candidate);
+  if (candidateKey === rootKey) return true;
+  const prefix = rootKey.endsWith(path.sep) ? rootKey : rootKey + path.sep;
+  if (candidateKey.startsWith(prefix)) return true;
   const rel = path.relative(root, candidate);
   return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel));
 }
@@ -22,7 +32,7 @@ export class FileSystemExecutor {
     if (typeof root !== 'string' || root.length === 0) throw new Error('root is required');
     this.root = path.resolve(root);
     fs.mkdirSync(this.root, { recursive: true });
-    this.realRoot = fs.realpathSync(this.root);
+    this.realRoot = fs.realpathSync.native(this.root);
   }
 
   resolve(relativePath) {
@@ -43,7 +53,7 @@ export class FileSystemExecutor {
     try {
       const info = await stat(target);
       if (!info.isFile()) return { exists: true, type: 'non-file' };
-      const canonical = await realpath(target);
+      const canonical = fs.realpathSync.native(target);
       if (!insideRoot(this.realRoot, canonical)) throw new Error('SYMLINK_OUTSIDE_ROOT');
       const content = await readFile(target, 'utf8');
       return { exists: true, type: 'file', content };

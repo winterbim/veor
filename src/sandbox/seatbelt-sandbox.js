@@ -7,6 +7,13 @@ function schemePath(value) {
   return '"' + String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 }
 
+function writePathVariants(entry) {
+  const resolved = path.resolve(entry);
+  const variants = new Set([resolved]);
+  try { variants.add(fs.realpathSync.native(resolved)); } catch { /* keep the lexical path */ }
+  return [...variants];
+}
+
 /**
  * macOS Seatbelt via sandbox-exec.
  * osEnforced is true only after sandbox-exec starts the payload.
@@ -33,7 +40,7 @@ export class SeatbeltSandbox extends ProcessSandbox {
   }
 
   buildProfile() {
-    const writes = this.writeRoots.length ? this.writeRoots : [this.workspace];
+    const writes = (this.writeRoots.length ? this.writeRoots : [this.workspace]).flatMap(writePathVariants);
     const allowWrites = writes.map((entry) => `(allow file-write* (subpath ${schemePath(entry)}))`).join('\n');
     const networkRule = this.network === 'allow' ? '(allow network*)' : '(deny network*)';
     return `(version 1)
@@ -58,7 +65,7 @@ ${networkRule}
     fs.writeFileSync(profile, this.buildProfile());
     let result;
     try {
-      result = await super.exec(['sandbox-exec', '-f', profile, '--', ...argv], { ...options, cwd: options.cwd ?? this.workspace });
+      result = await super.exec(['sandbox-exec', '-f', profile, ...argv], { ...options, cwd: options.cwd ?? this.workspace });
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
