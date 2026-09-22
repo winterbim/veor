@@ -9,7 +9,7 @@ test('filesystem executor writes inside root and reports before/after', async ()
   const root = await mkdtemp(path.join(os.tmpdir(), 'veor-fs-'));
   const ex = new FileSystemExecutor({ root });
   const receipt = await ex.execute({ tool: 'fs.writeText', args: { path: 'a/b.txt', text: 'hello' } });
-  assert.equal(receipt.ok, true);
+  assert.equal(receipt.ok, true, receipt.code);
   assert.equal(receipt.before.exists, false);
   assert.equal(receipt.after.content, 'hello');
 });

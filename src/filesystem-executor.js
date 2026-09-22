@@ -4,7 +4,19 @@ import path from 'node:path';
 
 function pathKey(value) {
   const resolved = path.resolve(value);
-  return process.platform === 'win32' ? resolved.replace(/^\\\\\?\\/, '').toLowerCase() : resolved;
+  let existing = resolved;
+  const pending = [];
+  while (!fs.existsSync(existing)) {
+    const parent = path.dirname(existing);
+    if (parent === existing) break;
+    pending.push(path.basename(existing));
+    existing = parent;
+  }
+  let base = existing;
+  try { base = fs.realpathSync.native(existing); } catch { /* lexical path if the OS cannot resolve it */ }
+  const full = pending.length ? path.join(base, ...pending.reverse()) : base;
+  const stripped = full.replace(/^\\\\\?\\/, '');
+  return process.platform === 'win32' ? stripped.toLowerCase() : stripped;
 }
 
 function insideRoot(root, candidate) {
@@ -41,7 +53,7 @@ export class FileSystemExecutor {
     if (!insideRoot(this.root, target)) throw new Error('PATH_OUTSIDE_ROOT');
     const ancestor = nearestExistingSync(target);
     if (!ancestor) throw new Error('PATH_UNRESOLVABLE');
-    const realAncestor = fs.realpathSync(ancestor);
+    const realAncestor = fs.realpathSync.native(ancestor);
     if (!insideRoot(this.realRoot, realAncestor)) throw new Error('SYMLINK_OUTSIDE_ROOT');
     const projected = path.resolve(realAncestor, path.relative(ancestor, target));
     if (!insideRoot(this.realRoot, projected)) throw new Error('SYMLINK_OUTSIDE_ROOT');
