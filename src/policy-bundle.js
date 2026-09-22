@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Decision, tighten } from './decision.js';
 import { hashObject } from './canonical.js';
+import { assertPolicyV1 } from './policy-schema.js';
 
 function arr(value) { return Array.isArray(value) ? value : []; }
 function resolveRoots(values, baseDir) { return arr(values).map(v => path.resolve(baseDir, v)); }
@@ -40,7 +41,7 @@ function pathAllowed(candidate, roots, { mustExist = false } = {}) {
 
 export class PolicyBundle {
   constructor(raw, { baseDir = process.cwd() } = {}) {
-    if (raw?.kind !== 'veor.policy/v1') throw new Error('policy.kind must be veor.policy/v1');
+    assertPolicyV1(raw);
     this.raw = structuredClone(raw);
     this.baseDir = path.resolve(baseDir);
     this.readRoots = resolveRoots(raw.filesystem?.readRoots ?? ['.'], this.baseDir);

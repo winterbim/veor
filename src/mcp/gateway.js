@@ -101,6 +101,12 @@ export async function runGateway({
       const r=await request(method,params??{}); if(r.error)return replyError(id,r.error.code,r.error.message,r.error.data); return reply(id,r.result);
     } catch(error) { ledger.append('gateway-error',{method,error:error.message}); if(id!==undefined) replyError(id,-32603,`VEOR gateway error: ${error.message}`); }
   });
-  rl.on('close',()=>{ try{child.stdin.end()}catch{} });
+  rl.on('close',()=>{ try{child.stdin.end()}catch{}; try{child.kill('SIGTERM')}catch{} });
+  for (const sig of ['SIGINT','SIGTERM']) {
+    process.on(sig, () => {
+      try { child.kill('SIGTERM'); } catch { /* ignore */ }
+      process.exit(0);
+    });
+  }
   process.stderr.write(`[veor] gateway ready policy=${policy.digest.slice(0,12)} downstream=${JSON.stringify(downstream)}\n`);
 }

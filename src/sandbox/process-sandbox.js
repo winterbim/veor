@@ -19,7 +19,12 @@ function boundedCollector(limit) {
 }
 
 export class ProcessSandbox {
-  constructor({ cwd, timeoutMs = 30_000, maxOutputBytes = 1_000_000, envAllowlist = ['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR'] } = {}) {
+  constructor({ cwd, timeoutMs = 30_000, maxOutputBytes = 1_000_000, envAllowlist = ['PATH', 'HOME', 'LANG', 'LC_ALL', 'TMPDIR'], requireOsIsolation = false } = {}) {
+    // Honest fail-closed: process backend never provides OS isolation.
+    // Do not construct this class when policy requires osEnforced.
+    if (requireOsIsolation) {
+      throw new Error('OS isolation required; process backend cannot enforce it (osEnforced would be false)');
+    }
     this.cwd = path.resolve(cwd ?? process.cwd());
     this.timeoutMs = timeoutMs;
     this.maxOutputBytes = maxOutputBytes;

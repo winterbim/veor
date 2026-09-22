@@ -51,17 +51,46 @@ git clone https://github.com/winterbim/veor.git && cd veor
 npm run demo
 ```
 
-No runtime packages to install beyond Node itself. `npm ci` / `npm install` only materialize the lockfile tooling surface. Full gate: `npm run check` (42 tests).
+No runtime packages to install beyond Node itself. `npm ci` / `npm install` only materialize the lockfile tooling surface. Full gate: `npm run check` (55 tests).
 
 ## Live demo (not a mock)
 
-Runs the **real** gateway (`src/mcp/stdio.js`) against the included downstream server. Shows a deterministic `DENY`, a policy `REVIEW` blocked before effect, and an `ALLOW` that produces a **signed** receipt.
+Runs the **real** gateway (`src/mcp/stdio.js`) against the included downstream server. Shows a deterministic `DENY`, a policy `REVIEW` blocked before effect, and an `ALLOW` that produces a **signed** receipt written under `evidence/current/`.
 
 ```bash
 npm run demo
+npm run verify
 ```
 
-Expected shape (values change each run; structure is stable):
+Real offline verify output from this workspace (exit 0):
+
+```text
+{
+  "ok": true,
+  "kind": "veor.receipt-verify/v1",
+  "checks": {
+    "structure": true,
+    "digest": true,
+    "signature": true,
+    "ledger": null
+  },
+  "reasons": [
+    "OK"
+  ],
+  "digest": "66d1b8d0ec498f36cf03b7696f55fcb270f1341b90ea0c61d63c8a376ae99856",
+  "receiptId": "11b72de1-8290-42e4-960b-7246a7ebb3f3"
+}
+```
+
+Equivalent CLI (also via bin `veor`):
+
+```bash
+node src/cli.js verify receipt evidence/current/demo-receipt.json --public evidence/current/demo-receipt.pub.pem
+```
+
+What the signature covers, and what it does not, is spelled out in `docs/PROOF.md`.
+
+Expected demo shape (values change each run; structure is stable):
 
 ```text
 ## 1) Unknown tool — deterministic DENY before downstream
@@ -128,15 +157,17 @@ npx veor sandbox-info
 ```bash
 npm run check          # parse all surfaces + full test gate
 npm run test:advanced  # advanced suite only
-npm run demo           # live gateway boundary demo
+npm run demo           # live gateway boundary demo (+ receipt artefact)
+npm run verify         # offline Ed25519+digest check of demo receipt
 ```
 
-Current gate: **42/42** tests (`CURSOR_HANDOFF.md`, `DEV_EVIDENCE.md`).
+Current gate: **55/55** tests (`CURSOR_HANDOFF.md`, `DEV_EVIDENCE.md`). Policy fixtures under `examples/fixtures/` are exercised by the schema tests.
 
 ## Docs worth reading before sharing claims
 
 - `LAUNCH.md` — what not to market yet
 - `SECURITY.md` / `docs/THREAT_MODEL.md` / `docs/SECURITY_MATRIX.md`
+- `docs/PROOF.md` — what a signed receipt proves (and does not)
 - `docs/LAUNCH_PUBLIC.md` — GitHub day-J checklist (human publish steps)
 - `CURSOR_HANDOFF.md` — P0 before calling it beta
 

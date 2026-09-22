@@ -19,5 +19,7 @@ jobs:
         run: npm ci || npm install
       - name: Parse + test gate
         run: npm run check
-      - name: Boundary demo (live gateway)
+      - name: Boundary demo (live gateway + receipt artefact)
         run: npm run demo
+      - name: Offline receipt verify (third-party proof)
+        run: npm run verify

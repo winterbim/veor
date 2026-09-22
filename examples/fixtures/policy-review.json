@@ -1,0 +1,25 @@
+{
+  "kind": "veor.policy/v1",
+  "name": "fixture-review-write",
+  "filesystem": {
+    "readRoots": ["."],
+    "writeRoots": [".veor/output"]
+  },
+  "mcp": {
+    "denyUnknownTools": true,
+    "requireAnnotations": true,
+    "tools": {
+      "filesystem.write_file": {
+        "decision": "REVIEW",
+        "capability": "filesystem.write",
+        "writePathArgs": ["path"],
+        "requireExplicitWritePath": true
+      }
+    }
+  },
+  "sandbox": {
+    "backend": "auto",
+    "network": "deny",
+    "requireOsIsolation": false
+  }
+}

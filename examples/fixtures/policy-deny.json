@@ -1,0 +1,18 @@
+{
+  "kind": "veor.policy/v1",
+  "name": "fixture-deny-unknown",
+  "filesystem": {
+    "readRoots": ["."],
+    "writeRoots": [".veor/output"]
+  },
+  "mcp": {
+    "denyUnknownTools": true,
+    "requireAnnotations": true,
+    "tools": {}
+  },
+  "sandbox": {
+    "backend": "auto",
+    "network": "deny",
+    "requireOsIsolation": false
+  }
+}

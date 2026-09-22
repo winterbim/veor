@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/winterbim/veor/schemas/policy-v1.schema.json",
+  "title": "VEOR policy v1",
+  "description": "Stable contract for veor.policy/v1. Runtime validation is implemented in src/policy-schema.js (zero npm deps). Monotonicity: ALLOW < REVIEW < DENY; decision = max(deterministic, advisory). Fields that would authorize advisory weakening are forbidden.",
+  "type": "object",
+  "required": ["kind"],
+  "additionalProperties": true,
+  "properties": {
+    "kind": { "const": "veor.policy/v1" },
+    "name": { "type": "string" },
+    "filesystem": {
+      "type": "object",
+      "properties": {
+        "readRoots": { "type": "array", "items": { "type": "string" } },
+        "writeRoots": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "properties": {
+        "denyUnknownTools": { "type": "boolean" },
+        "requireAnnotations": { "type": "boolean" },
+        "catalogFingerprint": { "type": "string" },
+        "tools": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "decision": { "enum": ["ALLOW", "REVIEW", "DENY"] },
+              "capability": { "type": "string" },
+              "readPathArgs": { "type": "array", "items": { "type": "string" } },
+              "writePathArgs": { "type": "array", "items": { "type": "string" } },
+              "reviewIfPresent": { "type": "array", "items": { "type": "string" } },
+              "requireExplicitWritePath": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "sandbox": {
+      "type": "object",
+      "properties": {
+        "backend": { "enum": ["auto", "process", "bubblewrap"] },
+        "network": { "enum": ["deny", "allow"] },
+        "requireOsIsolation": { "type": "boolean" }
+      }
+    },
+    "advisoryMayWeaken": false,
+    "advisoryCanWeaken": false,
+    "advisoryCanUpgrade": false,
+    "allowAdvisoryUpgrade": false
+  },
+  "not": {
+    "anyOf": [
+      { "required": ["advisoryMayWeaken"], "properties": { "advisoryMayWeaken": { "const": true } } },
+      { "required": ["advisoryCanWeaken"], "properties": { "advisoryCanWeaken": { "const": true } } },
+      { "required": ["advisoryCanUpgrade"], "properties": { "advisoryCanUpgrade": { "const": true } } },
+      { "required": ["allowAdvisoryUpgrade"], "properties": { "allowAdvisoryUpgrade": { "const": true } } }
+    ]
+  },
+  "x-veor-monotone": {
+    "order": "ALLOW < REVIEW < DENY",
+    "composition": "decision = max(deterministic, advisory)",
+    "note": "Advisory may only tighten. No policy field may authorize weakening."
+  }
+}

@@ -20,15 +20,17 @@ Implemented and mechanically tested:
 - process execution with argv-only invocation, timeout and output cap;
 - Linux Bubblewrap namespace backend when installed;
 - explicit fail-closed `requireOsIsolation` mode;
-- Cursor self-test configuration and continuation handoff.
+- Cursor self-test configuration and continuation handoff;
+- offline receipt verify CLI (`veor verify`) + `docs/PROOF.md`;
+- `veor.policy/v1` schema contract (`schemas/policy-v1.schema.json` + `src/policy-schema.js`).
 
 ## P0 — beta boundary
 
 - official MCP TypeScript SDK v2 transport targeting final 2026-07-28 protocol;
-- JSON Schema validation and draft-policy compiler;
+- draft-policy compiler from server catalog (untrusted draft until accepted);
 - Bubblewrap hardening with seccomp/Landlock/cgroup adapters where available;
 - secret broker and output redaction before persistence;
-- receipt verification/export CLI;
+- remote receipt/ledger anchor interface (optional);
 - revocation store for long-lived direct-runtime grants;
 - explicit postcondition contract for proxied tools where adapters expose one.
 

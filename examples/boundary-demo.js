@@ -176,11 +176,28 @@ try {
     note: 'Only ALLOWED tools reach the downstream mock server.',
   }, null, 2));
 
+  const receipt = allowed?.result?.veorReceipt ?? null;
+  const evidenceDir = path.join(root, 'evidence', 'current');
+  fs.mkdirSync(evidenceDir, { recursive: true });
+  const receiptPath = path.join(evidenceDir, 'demo-receipt.json');
+  const pubPath = path.join(evidenceDir, 'demo-receipt.pub.pem');
+  if (receipt?.signature) {
+    fs.writeFileSync(receiptPath, JSON.stringify(receipt, null, 2));
+    fs.writeFileSync(pubPath, receiptKeys.publicKeyPem);
+    section('5) Offline proof artefact (third-party verify)');
+    console.log(JSON.stringify({
+      receiptFile: path.relative(root, receiptPath),
+      publicKeyFile: path.relative(root, pubPath),
+      verifyCommand: `node src/cli.js verify receipt ${path.relative(root, receiptPath)} --public ${path.relative(root, pubPath)}`,
+      note: 'Re-run: npm run verify (exit 0 iff digest+Ed25519 hold).',
+    }, null, 2));
+  }
+
   const readyLine = Buffer.concat(stderrChunks).toString('utf8')
     .split(/\r?\n/)
     .find((line) => line.includes('[veor] gateway ready'));
   if (readyLine) {
-    section('5) Gateway stderr (process identity)');
+    section('6) Gateway stderr (process identity)');
     console.log(readyLine);
   }
 

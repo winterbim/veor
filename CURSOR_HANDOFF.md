@@ -5,7 +5,7 @@ This file is the authoritative continuation point when opening the repository in
 ## Current truth
 
 - `npm run check` passes.
-- Full test count at handoff: **42/42**.
+- Full test count at handoff update: **55/55**.
 - The repository is a developer preview, not production-certified software.
 - The original direct runtime still works.
 - New product surfaces are implemented under `src/kernel/`, `src/mcp/`, `src/security/`, `src/sandbox/` and `src/policy-bundle.js`.
@@ -72,7 +72,9 @@ Replace the hand-written external protocol surface with the official TypeScript 
 Do not change the kernel because of transport details.
 
 ### P0.2 Policy schema + compiler
-Add `schemas/policy-v1.schema.json` and validate every bundle before construction. Add a compiler command that can inspect a server catalog and generate an **untrusted draft** policy. Draft inference must never become active authority without explicit acceptance.
+Shipped: `schemas/policy-v1.schema.json` + zero-dep `src/policy-schema.js` enforced at `PolicyBundle` construction; fixtures in `examples/fixtures/`; rejects fields that would authorize advisory weakening.
+
+Still open: draft-policy compiler from server catalog (untrusted draft only).
 
 ### P0.3 Bubblewrap hardening
 Current backend is namespace isolation, not a full hardened Linux sandbox. Add:
@@ -86,13 +88,16 @@ Current backend is namespace isolation, not a full hardened Linux sandbox. Add:
 Do not invent a custom kernel isolation primitive.
 
 ### P0.4 Secret broker
-Never inject broad host environment into agent tools. Add a broker interface where policy maps a tool/capability to named secret handles, and the executor materializes only the exact secrets required for the bounded child process. Redact secret values from stdout/stderr before persistence.
+Not started as a product surface. Existing `src/security/redact.js` only redacts common secret-looking keys in approval previews. Never inject broad host environment into agent tools remains a requirement; a broker that maps tool/capability to named secret handles is still P0 before beta.
 
 ### P0.5 Receipt verification CLI
-Add:
-- `veor receipt verify <file> --public <key>`
-- export of decision+effect receipts as a compact JSON bundle;
-- optional remote anchor interface (Git transparency log / append-only object store / TSA adapter), without making the remote service mandatory.
+Shipped in this line:
+- `veor verify receipt <file> --public <key>` (alias `veor receipt verify …`);
+- optional `--ledger DIR` binding;
+- demo artefact + `npm run verify`;
+- `docs/PROOF.md` for covered bytes / non-claims.
+
+Still open: remote anchor interface (Git transparency log / append-only object store / TSA adapter).
 
 ## P1 — product differentiation
 

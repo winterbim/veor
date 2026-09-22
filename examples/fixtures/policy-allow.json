@@ -1,0 +1,24 @@
+{
+  "kind": "veor.policy/v1",
+  "name": "fixture-allow-read",
+  "filesystem": {
+    "readRoots": ["."],
+    "writeRoots": [".veor/output"]
+  },
+  "mcp": {
+    "denyUnknownTools": true,
+    "requireAnnotations": true,
+    "tools": {
+      "filesystem.read_file": {
+        "decision": "ALLOW",
+        "capability": "filesystem.read",
+        "readPathArgs": ["path"]
+      }
+    }
+  },
+  "sandbox": {
+    "backend": "auto",
+    "network": "deny",
+    "requireOsIsolation": false
+  }
+}

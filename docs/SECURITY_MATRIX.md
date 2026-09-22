@@ -7,7 +7,7 @@
 | Human approval | Ed25519, exact tool+args digest+scope+expiry, consumed once | replay-resistant within the approval store | hardware-backed signer / remote quorum |
 | Capability grants | Ed25519 + validity window + tool binding | cryptographically bound direct-runtime capability | distributed revocation service |
 | Evidence | SHA-256 chained JSONL + external head | detects event mutation, middle deletion, anchored tail truncation | public transparency log / remote anchoring |
-| Receipts | separate Ed25519 signer | receipt authenticity when signer key is protected | remote timestamp authority |
+| Receipts | separate Ed25519 signer + offline `veor verify` | receipt authenticity when signer key is protected; third-party re-check of digest+signature | remote timestamp authority / public transparency log |
 | MCP catalog | canonical tool fingerprint persisted | detects downstream catalog drift | semantic proof that an unchanged schema has unchanged behavior |
 | Filesystem policy | explicit read/write roots, realpath/symlink checks | blocks path escape covered by policy arguments | kernel-enforced filesystem controls without sandbox backend |
 | Process execution | argv-only, timeout, output cap, env allowlist | avoids shell interpolation in VEOR runner | protection from a hostile process by itself |

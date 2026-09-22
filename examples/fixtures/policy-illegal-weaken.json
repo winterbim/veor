@@ -1,0 +1,13 @@
+{
+  "kind": "veor.policy/v1",
+  "name": "fixture-illegal-weaken",
+  "advisoryMayWeaken": true,
+  "mcp": {
+    "denyUnknownTools": true,
+    "tools": {
+      "filesystem.write_file": {
+        "decision": "REVIEW"
+      }
+    }
+  }
+}
