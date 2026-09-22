@@ -1,6 +1,6 @@
 {
   "name": "veor-runtime",
-  "version": "0.4.0-dev.4",
+  "version": "0.4.0-dev.5",
   "type": "module",
   "description": "A verifiable execution boundary for AI agents: deterministic policy, one-shot approval, MCP gateway, signed receipts and OS-aware sandboxing.",
   "repository": {
@@ -49,7 +49,7 @@
     "demo:fs": "node examples/filesystem-demo.js",
     "verify": "node src/cli.js verify receipt evidence/current/demo-receipt.json --public evidence/current/demo-receipt.pub.pem",
     "verify:self": "node src/cli.js verify receipt evidence/current/self-allow-receipt.json --public evidence/current/self-allow-receipt.pub.pem",
-    "check": "node --check src/*.js && node --check src/kernel/*.js && node --check src/mcp/*.js && node --check src/sandbox/*.js && node --check src/security/*.js && node --check src/host/*.js && node --check examples/*.js && node --check examples/mcp/*.js && node --check scripts/*.js && node --check .cursor/hooks/*.js && node --test",
+    "check": "node scripts/check.js",
     "prepublishOnly": "npm run check",
     "bench": "node bench/core-bench.js",
     "test:advanced": "node --test test/advanced/*.test.js",

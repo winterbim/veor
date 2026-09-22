@@ -1,20 +1,32 @@
 import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 
-function has(command) {
-  const probe = spawnSync(command, ['--version'], { stdio: 'ignore', timeout: 1500 });
+function commandOnPath(command) {
+  if (process.platform === 'win32') {
+    const probe = spawnSync('where.exe', [command], { stdio: 'ignore', windowsHide: true });
+    return !probe.error && probe.status === 0;
+  }
+  const probe = spawnSync('which', [command], { stdio: 'ignore' });
   return !probe.error && probe.status === 0;
 }
 
 export function detectSandboxBackends() {
-  const linux = process.platform === 'linux';
-  const bwrap = linux && has('bwrap');
-  const docker = has('docker');
-  const podman = has('podman');
+  const platform = process.platform;
+  const bwrap = platform === 'linux' && commandOnPath('bwrap');
+  const seatbelt = platform === 'darwin' && (fs.existsSync('/usr/bin/sandbox-exec') || commandOnPath('sandbox-exec'));
+  const docker = commandOnPath('docker');
+  const podman = commandOnPath('podman');
+  let strongestLocal = 'process';
+  if (bwrap) strongestLocal = 'bubblewrap';
+  else if (seatbelt) strongestLocal = 'seatbelt';
   return {
-    platform: process.platform,
+    platform,
     bwrap,
+    seatbelt,
     docker,
     podman,
-    strongestLocal: bwrap ? 'bubblewrap' : (podman ? 'podman' : (docker ? 'docker' : 'process')),
+    // docker and podman are detected but not selected: no backend claims their isolation yet.
+    strongestLocal,
   };
 }

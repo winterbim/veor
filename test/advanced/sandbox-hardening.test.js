@@ -47,6 +47,31 @@ test('seccomp filter blocks sethostname inside bubblewrap and reports seccomp on
   assert.match(closed.stdout, /host-fail 1/);
 });
 
+test('seatbelt confines writes when sandbox-exec actually starts', async () => {
+  const detected = detectSandboxBackends();
+  if (!detected.seatbelt) return;
+  const granted = fs.mkdtempSync(path.join(os.tmpdir(), 'veor-sb-in-'));
+  const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'veor-sb-out-'));
+  const insideFile = path.join(granted, 'ok.txt');
+  const outsideFile = path.join(outside, 'no.txt');
+  const sandbox = createSandbox({
+    backend: 'seatbelt',
+    workspace: granted,
+    readRoots: [granted],
+    writeRoots: [granted],
+    network: 'deny',
+  });
+  const script = `const fs=require('fs'); fs.writeFileSync(${JSON.stringify(insideFile)}, 'x'); try { fs.writeFileSync(${JSON.stringify(outsideFile)}, 'x'); } catch (e) {}`;
+  const out = await sandbox.exec([process.execPath, '-e', script], { cwd: granted });
+  if (!out.sandbox.osEnforced) {
+    assert.equal(out.sandbox.osEnforced, false);
+    return;
+  }
+  assert.equal(out.sandbox.backend, 'seatbelt');
+  assert.equal(fs.readFileSync(insideFile, 'utf8'), 'x');
+  assert.equal(fs.existsSync(outsideFile), false);
+});
+
 test('landlock helper allows writes inside the granted directory only', () => {
   const helper = landlockHelperPath();
   if (!helper) return;

@@ -9,15 +9,20 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install bubblewrap (honest OS isolation backend when available)
+      - name: Install Linux sandbox tools
+        if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install -y bubblewrap build-essential
-      - name: Install (zero runtime deps; lockfile only)
+      - name: Install
         run: npm ci || npm install
       - name: Parse + test gate
         run: npm run check

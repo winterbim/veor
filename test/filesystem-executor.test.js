@@ -28,7 +28,12 @@ test('filesystem executor blocks symlink escape', async () => {
   const path = await import('node:path');
   const root = fsSync.mkdtempSync(path.join(os.tmpdir(), 'veor-root-'));
   const outside = fsSync.mkdtempSync(path.join(os.tmpdir(), 'veor-out-'));
-  fsSync.symlinkSync(outside, path.join(root, 'escape'));
+  try {
+    fsSync.symlinkSync(outside, path.join(root, 'escape'));
+  } catch (error) {
+    if (error?.code === 'EPERM' || error?.code === 'EACCES') return;
+    throw error;
+  }
   const executor = new FileSystemExecutor({ root });
   const result = await executor.execute({ tool: 'fs.writeText', args: { path: 'escape/pwn.txt', text: 'x' } });
   assert.equal(result.ok, false);

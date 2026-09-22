@@ -1,11 +1,11 @@
-# Cursor Handoff — VEOR 0.4.0-dev.4
+# Cursor Handoff — VEOR 0.4.0-dev.5
 
 This file is the authoritative continuation point when opening the repository in Cursor.
 
 ## Current truth
 
 - `npm run check` passes.
-- Full test count at handoff update: **66/66**.
+- Full test count at handoff update: **67/67**.
 - The repository is a developer preview, not production-certified software.
 - The original direct runtime still works.
 - New product surfaces are implemented under `src/kernel/`, `src/mcp/`, `src/security/`, `src/sandbox/`, `src/host/` and `src/policy-bundle.js`.

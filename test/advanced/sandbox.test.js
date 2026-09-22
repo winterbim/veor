@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createSandbox, detectSandboxBackends, BubblewrapSandbox, ProcessSandbox } from '../../src/sandbox/index.js';
 
-test('sandbox detection reports a concrete strongest backend',()=>{ const d=detectSandboxBackends(); assert.ok(['bubblewrap','podman','docker','process'].includes(d.strongestLocal)); });
+test('sandbox detection reports a concrete strongest backend',()=>{ const d=detectSandboxBackends(); assert.ok(['linux','darwin','win32','freebsd','openbsd'].includes(d.platform) || typeof d.platform === 'string'); assert.ok(['bubblewrap','seatbelt','process'].includes(d.strongestLocal)); if (d.platform !== 'linux') assert.equal(d.bwrap, false); if (d.platform !== 'darwin') assert.equal(d.seatbelt, false); });
 
 test('process fallback clearly reports no OS isolation',()=>{ const s=createSandbox({backend:'process'}); assert.equal(s.describe().osEnforced,false); });
 

@@ -30,7 +30,7 @@ When a call is routed through VEOR:
 - **Monotonic advisory** — a reflex/advisory provider may only *tighten* via `max(severity, advisory)`. It cannot manufacture authority or weaken a deterministic `REVIEW`/`DENY`.
 - **One-shot approvals** — human `REVIEW` → `ALLOW` is Ed25519-signed, bound to exact tool + argument digest + scope + expiry, and consumed once.
 - **Receipts** — gateway decisions can emit a separately signed execution receipt (distinct key from approval authority), including non-executed `DENY`/`REVIEW` artefacts when receipt signing is configured.
-- **Sandbox honesty** — Bubblewrap reports `osEnforced: true` only after a successful `bwrap` spawn. Process fallback is always `osEnforced: false`.
+- **Sandbox honesty** — `osEnforced: true` only after the platform backend actually starts the child. Linux uses Bubblewrap (plus seccomp when the filter loads). macOS uses Seatbelt (`sandbox-exec`) when that binary exists. Windows runs the effect and reports `osEnforced: false`.
 
 ## What VEOR does **not** guarantee
 
@@ -39,10 +39,10 @@ Read `docs/THREAT_MODEL.md` and `docs/SECURITY_MATRIX.md` before citing this pro
 - Not a security certification or “production-safe” claim (`LAUNCH.md`, `SECURITY.md`).
 - External security review: **PENDING** (`DEV_EVIDENCE.md`).
 - Same-user bypass: an unrestricted shell outside the repo host hook can still bypass VEOR.
-- Host sandbox: Bubblewrap namespaces when `bwrap` starts successfully; otherwise process-only. No seccomp/Landlock/gVisor/microVM in this build.
+- Host sandbox: Linux Bubblewrap when `bwrap` starts; macOS Seatbelt when `sandbox-exec` starts; otherwise process-only, including Windows. No gVisor or microVM.
 - MCP transport: hand-written stdio JSON-RPC adapter for testing; **not** advertised as complete MCP 2026-07-28 / official SDK v2 conformance.
 
-**Status:** `0.4.0-dev.2` developer preview · MIT · Node.js ≥ 22 · **0 runtime dependencies**.
+**Status:** `0.4.0-dev.5` developer preview · MIT · Node.js ≥ 22 · Linux, macOS, and Windows.
 
 ## Install (≤2 commands)
 

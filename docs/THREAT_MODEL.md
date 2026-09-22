@@ -42,7 +42,7 @@ VEOR only controls actions routed through it. A coding agent with a separate unr
 For this repository, `.cursor/hooks.json` runs `beforeShellExecution` on every shell command (`failClosed: true`). Maintenance commands (`npm test`, `npm run check|demo|self|verify`, `git status|diff|log`, `node --test`) are allowed only as a single command with no shell metacharacters. Every other shell command is denied unless `VEOR_EFFECT_RECEIPT` verifies. An unrestricted same-user shell that never enters Cursor — a terminal, another IDE, `ssh` — is still outside the guarantee.
 
 ### Hostile child process
-The process fallback is explicitly non-isolated (`osEnforced: false`). On Linux, when `bwrap` starts the child, that effect reports `osEnforced: true` and `seccomp: true` for a filter that returns EPERM on `sethostname`. If bubblewrap fails during setup, neither flag is set. Landlock is a separate helper (`src/sandbox/landlock-exec.c`): it is enforced only when the helper compiles and `landlock_restrict_self` succeeds. There is no gVisor or microVM backend.
+The process fallback is explicitly non-isolated (`osEnforced: false`) on every OS, including Windows. On Linux, when `bwrap` starts the child, that effect reports `osEnforced: true` and `seccomp: true` for a filter that returns EPERM on `sethostname`. If bubblewrap fails during setup, neither flag is set. Landlock is a separate Linux helper (`src/sandbox/landlock-exec.c`). On macOS, Seatbelt (`sandbox-exec`) is the isolation backend and reports `osEnforced: true` only after it starts the payload. There is no gVisor, microVM, or Windows AppContainer backend.
 
 ## Explicit non-claims
 

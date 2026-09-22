@@ -1,6 +1,7 @@
 import { detectSandboxBackends } from './detect.js';
 import { ProcessSandbox } from './process-sandbox.js';
 import { BubblewrapSandbox } from './bubblewrap-sandbox.js';
+import { SeatbeltSandbox } from './seatbelt-sandbox.js';
 
 export function createSandbox(config = {}) {
   const detected = detectSandboxBackends();
@@ -13,6 +14,13 @@ export function createSandbox(config = {}) {
     }
     return new BubblewrapSandbox(config);
   }
+  if (selected === 'seatbelt') {
+    if (!detected.seatbelt) {
+      if (config.requireOsIsolation) throw new Error('seatbelt requested but unavailable');
+      return new ProcessSandbox(config);
+    }
+    return new SeatbeltSandbox(config);
+  }
   if (selected === 'process') {
     if (config.requireOsIsolation) throw new Error('OS isolation required but no supported backend is available');
     return new ProcessSandbox(config);
@@ -20,4 +28,4 @@ export function createSandbox(config = {}) {
   throw new Error(`sandbox backend not implemented in this build: ${selected}`);
 }
 
-export { detectSandboxBackends, ProcessSandbox, BubblewrapSandbox };
+export { detectSandboxBackends, ProcessSandbox, BubblewrapSandbox, SeatbeltSandbox };

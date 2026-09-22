@@ -32,7 +32,18 @@ export class ProcessSandbox {
     this.envAllowlist = envAllowlist;
   }
   describe() {
-    return { backend: 'process', isolation: 'none', osEnforced: false, networkIsolated: false, filesystemIsolated: false };
+    const note = process.platform === 'win32'
+      ? 'Windows runs effects without an OS isolation backend in this build'
+      : undefined;
+    return {
+      backend: 'process',
+      isolation: 'none',
+      osEnforced: false,
+      networkIsolated: false,
+      filesystemIsolated: false,
+      platform: process.platform,
+      ...(note ? { note } : {}),
+    };
   }
   async exec(argv, { cwd = this.cwd, env = {}, timeoutMs = this.timeoutMs, stdioExtra = [] } = {}) {
     if (!Array.isArray(argv) || !argv.length || argv.some(x => typeof x !== 'string')) throw new Error('argv must be a non-empty string array');

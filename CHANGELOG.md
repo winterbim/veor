@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.0-dev.5 — 2026-09-23
+
+- The gate, demo, and self-check run on Linux, macOS, and Windows. CI is a matrix of those three.
+- macOS isolation is Seatbelt (`sandbox-exec`). `osEnforced: true` only after it starts the payload.
+- Windows has no OS-isolation backend in this build. Effects run, and the result says `osEnforced: false`.
+- `npm run check` expands files in Node so the gate does not depend on a Unix shell.
+
 ## 0.4.0-dev.4 — 2026-09-23
 
 - Cursor `beforeShellExecution` in this repo is default-deny except single maintenance commands. A terminal outside Cursor is still uncovered.
