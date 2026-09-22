@@ -1,6 +1,6 @@
 {
   "name": "veor-runtime",
-  "version": "0.4.0-dev.2",
+  "version": "0.4.0-dev.3",
   "type": "module",
   "description": "A verifiable execution boundary for AI agents: deterministic policy, one-shot approval, MCP gateway, signed receipts and OS-aware sandboxing.",
   "repository": {

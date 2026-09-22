@@ -30,9 +30,13 @@ export class BubblewrapSandbox extends ProcessSandbox {
   }
   async exec(argv, options = {}) {
     const result = await super.exec(this.buildArgv(argv, options), { ...options, cwd: '/' });
-    // Honest: isolation is enforced only when bubblewrap itself started (not SPAWN_ERROR).
-    // A non-zero exit inside the namespace still means OS isolation was applied.
-    const started = result.code !== 'SPAWN_ERROR';
+    // Honest: isolation counts only after bubblewrap is running the payload.
+    // A setup failure (for example loopback RTM_NEWADDR on locked-down CI kernels)
+    // is bwrap itself, not an in-namespace exit, and must not set osEnforced.
+    // A non-zero exit of the payload, with no bwrap setup error, still means isolation ran.
+    const setupFailed = result.code === 'SPAWN_ERROR'
+      || (result.code !== 0 && /(^|\n)bwrap: /.test(result.stderr ?? ''));
+    const started = !setupFailed;
     result.sandbox = {
       backend: 'bubblewrap',
       isolation: started ? 'namespace' : 'none',

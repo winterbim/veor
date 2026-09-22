@@ -37,7 +37,8 @@ test('bubblewrap sets osEnforced true only after isolation actually starts', asy
   // describe() must not claim enforcement before a successful spawn
   assert.equal(s.describe().osEnforced, false);
   const out = await s.exec([process.execPath, '-e', 'process.stdout.write("iso-ok")'], { cwd: w });
-  if (out.code === 'SPAWN_ERROR') {
+  if (!out.sandbox.osEnforced) {
+    assert.equal(out.ok, false);
     assert.equal(out.sandbox.osEnforced, false);
     return;
   }
