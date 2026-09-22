@@ -22,14 +22,17 @@ Implemented and mechanically tested:
 - explicit fail-closed `requireOsIsolation` mode;
 - Cursor self-test configuration and continuation handoff;
 - offline receipt verify CLI (`veor verify`) + `docs/PROOF.md`;
-- `veor.policy/v1` schema contract (`schemas/policy-v1.schema.json` + `src/policy-schema.js`).
+- `veor.policy/v1` schema contract (`schemas/policy-v1.schema.json` + `src/policy-schema.js`);
+- self-dogfood (`policies/veor-self.json`, `npm run self`, Cursor MCP + host hook);
+- minimal in-memory secret broker for authorized effects (receipts stay scrubbed);
+- Bubblewrap `osEnforced: true` only after a successful bwrap spawn.
 
 ## P0 — beta boundary
 
 - official MCP TypeScript SDK v2 transport targeting final 2026-07-28 protocol;
 - draft-policy compiler from server catalog (untrusted draft until accepted);
 - Bubblewrap hardening with seccomp/Landlock/cgroup adapters where available;
-- secret broker and output redaction before persistence;
+- broader secret-broker product surface (named handles across tools, not only self-probe);
 - remote receipt/ledger anchor interface (optional);
 - revocation store for long-lived direct-runtime grants;
 - explicit postcondition contract for proxied tools where adapters expose one.

@@ -29,8 +29,8 @@ When a call is routed through VEOR:
 - **Deterministic policy first** — `ALLOW < REVIEW < DENY`; unknown MCP tools fail closed under the default bundle.
 - **Monotonic advisory** — a reflex/advisory provider may only *tighten* via `max(severity, advisory)`. It cannot manufacture authority or weaken a deterministic `REVIEW`/`DENY`.
 - **One-shot approvals** — human `REVIEW` → `ALLOW` is Ed25519-signed, bound to exact tool + argument digest + scope + expiry, and consumed once.
-- **Receipts** — successful gateway effects can emit a separately signed execution receipt (distinct key from approval authority).
-- **Sandbox honesty** — receipts/backends report the isolation actually used. Process fallback is `osEnforced: false`; it is never labelled as OS isolation.
+- **Receipts** — gateway decisions can emit a separately signed execution receipt (distinct key from approval authority), including non-executed `DENY`/`REVIEW` artefacts when receipt signing is configured.
+- **Sandbox honesty** — Bubblewrap reports `osEnforced: true` only after a successful `bwrap` spawn. Process fallback is always `osEnforced: false`.
 
 ## What VEOR does **not** guarantee
 
@@ -38,11 +38,11 @@ Read `docs/THREAT_MODEL.md` and `docs/SECURITY_MATRIX.md` before citing this pro
 
 - Not a security certification or “production-safe” claim (`LAUNCH.md`, `SECURITY.md`).
 - External security review: **PENDING** (`DEV_EVIDENCE.md`).
-- Same-user bypass: an agent with an unrestricted shell/filesystem tool outside VEOR can bypass an MCP-only deployment.
-- Host sandbox: Bubblewrap namespaces when `bwrap` is present; otherwise process-only. No seccomp/Landlock/gVisor/microVM in this build.
+- Same-user bypass: an unrestricted shell outside the repo host hook can still bypass VEOR.
+- Host sandbox: Bubblewrap namespaces when `bwrap` starts successfully; otherwise process-only. No seccomp/Landlock/gVisor/microVM in this build.
 - MCP transport: hand-written stdio JSON-RPC adapter for testing; **not** advertised as complete MCP 2026-07-28 / official SDK v2 conformance.
 
-**Status:** `0.4.0-dev.1` developer preview · MIT · Node.js ≥ 22 · **0 runtime dependencies** · ~1.5k LOC core surfaces.
+**Status:** `0.4.0-dev.2` developer preview · MIT · Node.js ≥ 22 · **0 runtime dependencies**.
 
 ## Install (≤2 commands)
 
@@ -51,11 +51,9 @@ git clone https://github.com/winterbim/veor.git && cd veor
 npm run demo
 ```
 
-No runtime packages to install beyond Node itself. `npm ci` / `npm install` only materialize the lockfile tooling surface. Full gate: `npm run check` (55 tests).
+No runtime packages to install beyond Node itself. Full gate: `npm run check` (61 tests).
 
 ## Live demo (not a mock)
-
-Runs the **real** gateway (`src/mcp/stdio.js`) against the included downstream server. Shows a deterministic `DENY`, a policy `REVIEW` blocked before effect, and an `ALLOW` that produces a **signed** receipt written under `evidence/current/`.
 
 ```bash
 npm run demo
@@ -77,75 +75,117 @@ Real offline verify output from this workspace (exit 0):
   "reasons": [
     "OK"
   ],
-  "digest": "66d1b8d0ec498f36cf03b7696f55fcb270f1341b90ea0c61d63c8a376ae99856",
-  "receiptId": "11b72de1-8290-42e4-960b-7246a7ebb3f3"
+  "digest": "ecf4fb63873b74bc9faa489ac603164011dec6be0137f9b3cc228870d37995f0",
+  "receiptId": "4fd71d81-a411-4d9f-8564-7030ce3f999a"
 }
-```
-
-Equivalent CLI (also via bin `veor`):
-
-```bash
-node src/cli.js verify receipt evidence/current/demo-receipt.json --public evidence/current/demo-receipt.pub.pem
 ```
 
 What the signature covers, and what it does not, is spelled out in `docs/PROOF.md`.
 
-Expected demo shape (values change each run; structure is stable):
+## Self-dogfood — VEOR on VEOR
 
-```text
-## 1) Unknown tool — deterministic DENY before downstream
-  decision: "DENY", executed: false, reasons include UNKNOWN_TOOL
+VEOR governs calls against this repository using `policies/veor-self.json` (ALLOW reads / secret probe; DENY destructive delete and writes).
 
-## 2) Policy REVIEW — write blocked before downstream
-  decision: "REVIEW", executed: false, challenge file written
-
-## 3) Policy ALLOW — read executes; signed receipt produced
-  executed: true, receipt.signatureValid: true
-
-## 4) Downstream effect marker
-  downstreamCallsObserved: ["filesystem.read_file"]
-  writeFileCreated: false
+```bash
+npm run self
+npm run verify:self
 ```
 
-Original embedded-runtime demos remain at `npm run demo:runtime` and `npm run demo:fs`.
+Real output from this workspace:
+
+```text
+## 1) ALLOW — read CONSTITUTION.md through gateway
+{
+  "executed": true,
+  "decision": "ALLOW",
+  "tool": "filesystem.read_file",
+  "signaturePresent": true,
+  "signatureValid": true
+}
+
+## 2) DENY — destructive veor.self.delete blocked before downstream
+{
+  "decision": "DENY",
+  "executed": false,
+  "reasons": [
+    "MCP_SIDE_EFFECT_HINT",
+    "POLICY_DENY"
+  ],
+  "signaturePresent": true,
+  "signatureValid": true
+}
+
+## 3) ALLOW — secret_probe via broker-injected one-shot file
+{
+  "effectSawSecret": true,
+  "secretLengthMatched": true,
+  "receiptContainsSecret": false,
+  "stderrContainsSecret": false,
+  "signatureValid": true
+}
+
+## 4) Offline verify — ALLOW receipt replays; tamper fails
+{
+  "verifyAllow": { "ok": true, "digest": "682cb5e501c8d9452c970987606facf99cc64a3b15775daee61946cc9014e55c" },
+  "verifyTampered": { "ok": false, "reasons": ["DIGEST_MISMATCH"] },
+  "cliExitCode": 0
+}
+```
+
+`npm run verify:self` replay (exit 0):
+
+```text
+{
+  "ok": true,
+  "kind": "veor.receipt-verify/v1",
+  "checks": {
+    "structure": true,
+    "digest": true,
+    "signature": true,
+    "ledger": null
+  },
+  "reasons": [
+    "OK"
+  ],
+  "digest": "682cb5e501c8d9452c970987606facf99cc64a3b15775daee61946cc9014e55c",
+  "receiptId": "17a3daa4-cb60-4b0e-853c-f02dd38f9051"
+}
+```
 
 ## Why VEOR
 
 | Fact | Why it matters |
 |---|---|
-| Monotonic `max(severity, advisory)` | Semantic risk can add friction; it cannot grant power. |
+| Monotonic `max(deterministic, advisory)` | Semantic risk can add friction; it cannot grant power. |
 | One-shot, exact-call approvals | Replay and argument rebinding fail closed in the approval store. |
 | Separate receipt authority | “Someone approved” ≠ “this effect’s evidence is authentic.” |
-| Truthful `osEnforced` | Process fallback never masquerades as a sandbox. |
+| Truthful `osEnforced` | Process fallback never masquerades as a sandbox; bwrap claims enforcement only after spawn. |
 | Portable JSON policy, zero runtime deps | Inspectable authority surface; small install footprint. |
 
 ## MCP client config (what works today)
 
-Entry point that works now: **`src/mcp/stdio.js`** (legacy hand-written stdio gateway). Official MCP SDK v2 transport is P0 work — do not claim it yet.
+Entry point: **`src/mcp/stdio.js`**. Official MCP SDK v2 transport is still P0 work.
 
-**Cursor** (also shipped as `.cursor/mcp.json` when this folder is the workspace):
+**Cursor** (shipped as `.cursor/mcp.json`):
 
 ```json
 {
   "mcpServers": {
-    "veor-selftest": {
+    "veor-self": {
       "type": "stdio",
       "command": "node",
       "args": ["${workspaceFolder}/src/mcp/stdio.js"],
       "env": {
-        "VEOR_POLICY": "${workspaceFolder}/veor.policy.json",
+        "VEOR_POLICY": "${workspaceFolder}/policies/veor-self.json",
         "VEOR_RUNTIME_DIR": "${workspaceFolder}/.veor/cursor-runtime",
-        "VEOR_DOWNSTREAM_JSON": "[\"node\",\"${workspaceFolder}/examples/mcp/mock-server.js\"]",
-        "VEOR_ADVISORY_MODULE": "${workspaceFolder}/examples/mcp/advisory.js"
+        "VEOR_DOWNSTREAM_JSON": "[\"node\",\"${workspaceFolder}/examples/mcp/self-server.js\"]"
       }
     }
   }
 }
 ```
 
-Copyable templates: `examples/mcp/cursor.mcp.json`, `examples/mcp/claude_desktop.mcp.json`.
-
-Inspect backends:
+Host hook (agent/npm gated surface): `.cursor/hooks.json` → `node .cursor/hooks/veor-repo-effect.js`. See `docs/THREAT_MODEL.md` for coverage vs same-user shell.
 
 ```bash
 npx veor sandbox-info
@@ -156,19 +196,19 @@ npx veor sandbox-info
 
 ```bash
 npm run check          # parse all surfaces + full test gate
-npm run test:advanced  # advanced suite only
 npm run demo           # live gateway boundary demo (+ receipt artefact)
 npm run verify         # offline Ed25519+digest check of demo receipt
+npm run self           # VEOR-on-VEOR dogfood (+ ALLOW/DENY receipts)
+npm run verify:self    # offline verify of self ALLOW receipt
 ```
 
-Current gate: **55/55** tests (`CURSOR_HANDOFF.md`, `DEV_EVIDENCE.md`). Policy fixtures under `examples/fixtures/` are exercised by the schema tests.
+Current gate: **61/61** tests.
 
 ## Docs worth reading before sharing claims
 
 - `LAUNCH.md` — what not to market yet
 - `SECURITY.md` / `docs/THREAT_MODEL.md` / `docs/SECURITY_MATRIX.md`
 - `docs/PROOF.md` — what a signed receipt proves (and does not)
-- `docs/LAUNCH_PUBLIC.md` — GitHub day-J checklist (human publish steps)
 - `CURSOR_HANDOFF.md` — P0 before calling it beta
 
 ## License

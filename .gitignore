@@ -7,3 +7,9 @@ node_modules/
 !.env.example
 evidence/current/demo-receipt.json
 evidence/current/demo-receipt.pub.pem
+evidence/current/self-allow-receipt.json
+evidence/current/self-allow-receipt.pub.pem
+evidence/current/self-deny-receipt.json
+evidence/current/self-deny-receipt.pub.pem
+evidence/current/self-secret-receipt.json
+*.secret

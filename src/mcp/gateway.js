@@ -54,7 +54,30 @@ export async function runGateway({
   function toolByName(name){ return tools.find(t=>t.name===name); }
   function block(decision){
     const challenge = decision.challenge;
-    return { content:[{type:'text',text:`VEOR ${decision.decision}: tool not executed.\n${decision.reasons.map(x=>`- ${x}`).join('\n')}${challenge?`\nChallenge: ${challenge.challengeFile}`:''}`}], structuredContent:{veor:{decision:decision.decision,executed:false,reasons:decision.reasons,capability:decision.capability,argsDigest:decision.record.argsDigest,challenge:challenge?{id:challenge.challengeId,file:challenge.challengeFile,expiresAt:challenge.expiresAt}:null}}, isError:true };
+    // Signed non-executed receipt when receipt authority is configured (dogfood / audit).
+    const signedReceipt = kernel.receipt({
+      decisionRecord: decision.record,
+      resultDigest: null,
+      executed: false,
+      verified: null,
+      sandbox: null,
+    });
+    return {
+      content:[{type:'text',text:`VEOR ${decision.decision}: tool not executed.\n${decision.reasons.map(x=>`- ${x}`).join('\n')}${challenge?`\nChallenge: ${challenge.challengeFile}`:''}`}],
+      structuredContent:{
+        veor:{
+          decision:decision.decision,
+          executed:false,
+          reasons:decision.reasons,
+          capability:decision.capability,
+          argsDigest:decision.record.argsDigest,
+          challenge:challenge?{id:challenge.challengeId,file:challenge.challengeFile,expiresAt:challenge.expiresAt}:null,
+          receipt: signedReceipt?.signature ? signedReceipt : null,
+        },
+      },
+      veorReceipt: signedReceipt?.signature ? signedReceipt : null,
+      isError:true,
+    };
   }
   function veorTools(){return [
     {name:'veor_status',description:'Inspect VEOR policy, catalog integrity, ledger integrity and approval readiness.',inputSchema:{type:'object',properties:{}},annotations:{readOnlyHint:true,idempotentHint:true,openWorldHint:false}},
@@ -86,7 +109,10 @@ export async function runGateway({
           const value=policy.evaluateTool({tool:target,args:args.arguments??{},advisoryDecision:advice.decision,catalogFingerprint:catalog?.current});
           return reply(id,{content:[{type:'text',text:JSON.stringify({...value,advisoryReasons:advice.reasons,executed:false},null,2)}],structuredContent:{...value,advisoryReasons:advice.reasons,executed:false},isError:false});
         }
-        if(!tool) return reply(id,block({decision:'DENY',reasons:['UNKNOWN_TOOL'],capability:'unknown',record:{argsDigest:hashObject(args)}}));
+        if(!tool) {
+          const decision=kernel.decide({tool:{name,annotations:{destructiveHint:true}},args,advisoryDecision:Decision.ALLOW,catalogFingerprint:catalog?.current});
+          return reply(id,block(decision));
+        }
         const advice=await advisory.assess({tool,args,policyDigest:policy.digest});
         const decision=kernel.decide({tool,args,advisoryDecision:advice.decision,catalogFingerprint:catalog?.current});
         decision.reasons.push(...advice.reasons.map(r=>`ADVISORY_REASON:${r}`));

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": "node .cursor/hooks/veor-repo-effect.js",
+        "matcher": "veor-gated|VEOR_REQUIRE_RECEIPT|scripts/veor-gated-effect",
+        "failClosed": true
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "node .cursor/hooks/veor-repo-effect.js",
+        "matcher": "veor-self",
+        "failClosed": false
+      }
+    ]
+  }
+}

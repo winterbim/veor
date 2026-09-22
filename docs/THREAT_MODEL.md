@@ -37,10 +37,12 @@ The embedded runtime keeps execution and postcondition verification separate. Ge
 The persistent ledger hashes each event against its predecessor and writes an external local head. This detects retained-event mutation, middle deletion and anchored tail truncation. An attacker able to replace both ledger and anchor is outside the local-only guarantee; remote anchoring is planned.
 
 ### Hostile child process
-The process fallback is explicitly non-isolated. On Linux, Bubblewrap can provide namespace/filesystem/network isolation when installed. The preview does not yet include a seccomp profile, Landlock rules, gVisor or microVM backend.
+The process fallback is explicitly non-isolated (`osEnforced: false`). On Linux, when `bwrap` is installed and the Bubblewrap backend successfully starts a child, that effect reports `osEnforced: true`; if bubblewrap fails to spawn, the result does not claim OS isolation. The preview does not yet include a seccomp profile, Landlock rules, gVisor or microVM backend.
 
 ### Same-user bypass
 VEOR only controls actions routed through it. A coding agent with a separate unrestricted shell or filesystem tool can bypass an MCP-only deployment. Host policy/hooks or OS isolation are required to reduce that bypass.
+
+For this repository, `.cursor/hooks.json` + `src/host/repo-effect-gate.js` reduce bypass on the **agent/MCP/npm-script surface** that matches gated commands (`veor-gated`, `VEOR_REQUIRE_RECEIPT`, `scripts/veor-gated-effect.js`): those effects are denied without a valid VEOR receipt. An unrestricted same-user shell that never hits that hook is still outside the guarantee.
 
 ## Explicit non-claims
 

@@ -15,6 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install bubblewrap (honest OS isolation backend when available)
+        run: sudo apt-get update && sudo apt-get install -y bubblewrap
       - name: Install (zero runtime deps; lockfile only)
         run: npm ci || npm install
       - name: Parse + test gate
@@ -23,3 +25,7 @@ jobs:
         run: npm run demo
       - name: Offline receipt verify (third-party proof)
         run: npm run verify
+      - name: Self-dogfood (VEOR on VEOR)
+        run: npm run self
+      - name: Offline verify self ALLOW receipt
+        run: npm run verify:self

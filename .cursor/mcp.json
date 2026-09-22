@@ -1,14 +1,13 @@
 {
   "mcpServers": {
-    "veor-selftest": {
+    "veor-self": {
       "type": "stdio",
       "command": "node",
       "args": ["${workspaceFolder}/src/mcp/stdio.js"],
       "env": {
-        "VEOR_POLICY": "${workspaceFolder}/veor.policy.json",
+        "VEOR_POLICY": "${workspaceFolder}/policies/veor-self.json",
         "VEOR_RUNTIME_DIR": "${workspaceFolder}/.veor/cursor-runtime",
-        "VEOR_DOWNSTREAM_JSON": "[\"node\",\"${workspaceFolder}/examples/mcp/mock-server.js\"]",
-        "VEOR_ADVISORY_MODULE": "${workspaceFolder}/examples/mcp/advisory.js"
+        "VEOR_DOWNSTREAM_JSON": "[\"node\",\"${workspaceFolder}/examples/mcp/self-server.js\"]"
       }
     }
   }

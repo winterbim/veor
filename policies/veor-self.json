@@ -1,0 +1,38 @@
+{
+  "kind": "veor.policy/v1",
+  "name": "veor-self",
+  "filesystem": {
+    "readRoots": [".."],
+    "writeRoots": ["../.veor/output"]
+  },
+  "mcp": {
+    "denyUnknownTools": true,
+    "requireAnnotations": true,
+    "tools": {
+      "filesystem.read_file": {
+        "decision": "ALLOW",
+        "capability": "filesystem.read",
+        "readPathArgs": ["path"]
+      },
+      "veor.self.secret_probe": {
+        "decision": "ALLOW",
+        "capability": "veor.self.secret_probe"
+      },
+      "filesystem.write_file": {
+        "decision": "DENY",
+        "capability": "filesystem.write",
+        "writePathArgs": ["path"],
+        "requireExplicitWritePath": true
+      },
+      "veor.self.delete": {
+        "decision": "DENY",
+        "capability": "veor.self.delete"
+      }
+    }
+  },
+  "sandbox": {
+    "backend": "auto",
+    "network": "deny",
+    "requireOsIsolation": false
+  }
+}

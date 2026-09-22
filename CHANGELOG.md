@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0-dev.2 — 2026-09-22
+
+- self-dogfood: `policies/veor-self.json`, `npm run self`, Cursor MCP pointing at the self policy;
+- signed non-executed receipts for DENY/REVIEW when receipt signing is configured;
+- minimal zero-dep secret broker + self `secret_probe` (secret absent from receipts/logs);
+- Bubblewrap reports `osEnforced: true` only after a successful `bwrap` spawn;
+- repo host hook + `veor-gated-effect` wrapper (agent/npm surface; same-user shell still out of scope);
+- CI runs `self` + `verify:self`; test gate 61/61.
+
 ## 0.4.0-dev.1 — 2026-09-22
 
 - added portable default-deny MCP policy bundles;

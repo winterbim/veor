@@ -16,3 +16,33 @@ test('ProcessSandbox constructor refuses requireOsIsolation (honest osEnforced:f
 });
 
 test('bubblewrap plan denies network and binds workspace when available conceptually',()=>{ const w=fs.mkdtempSync(path.join(os.tmpdir(),'veor-sb-')); const s=new BubblewrapSandbox({workspace:w,readRoots:[w],writeRoots:[w],network:'deny'}); const argv=s.buildArgv(['node','-v']); assert.ok(argv.includes('--unshare-net')); assert.ok(argv.includes('--bind')); assert.equal(argv[0],'bwrap'); });
+
+test('bubblewrap sets osEnforced true only after isolation actually starts', async () => {
+  const detected = detectSandboxBackends();
+  if (!detected.bwrap) {
+    assert.throws(
+      () => createSandbox({ backend: 'bubblewrap', requireOsIsolation: true, workspace: process.cwd() }),
+      /unavailable|OS isolation required/,
+    );
+    return;
+  }
+  const w = fs.mkdtempSync(path.join(os.tmpdir(), 'veor-bwrap-exec-'));
+  const s = createSandbox({
+    backend: 'bubblewrap',
+    workspace: w,
+    readRoots: [w],
+    writeRoots: [w],
+    network: 'deny',
+  });
+  // describe() must not claim enforcement before a successful spawn
+  assert.equal(s.describe().osEnforced, false);
+  const out = await s.exec([process.execPath, '-e', 'process.stdout.write("iso-ok")'], { cwd: w });
+  if (out.code === 'SPAWN_ERROR') {
+    assert.equal(out.sandbox.osEnforced, false);
+    return;
+  }
+  assert.equal(out.ok, true, out.stderr || String(out.code));
+  assert.equal(out.stdout.trim(), 'iso-ok');
+  assert.equal(out.sandbox.backend, 'bubblewrap');
+  assert.equal(out.sandbox.osEnforced, true);
+});
