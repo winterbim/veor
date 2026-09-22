@@ -21,7 +21,7 @@ function start({approvalKeys=null}={}){
 }
 async function init(c){await c.rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{}});await c.rpc('tools/list',{})}
 function marks(c){return fs.existsSync(c.marker)?fs.readFileSync(c.marker,'utf8').trim().split(/\r?\n/).filter(Boolean):[]}
-function stop(c){try{c.child.kill('SIGKILL')}catch{}}
+function stop(c){try{c.child.stdin.end()}catch{} try{c.child.kill('SIGTERM')}catch{}}
 
 test('gateway passes safe read and blocks reviewed write before downstream',async t=>{const c=start();t.after(()=>stop(c));await init(c);const f=path.join(root,'README.md');let r=await c.rpc('tools/call',{name:'filesystem.read_file',arguments:{path:f}});assert.equal(r.result.isError,false);r=await c.rpc('tools/call',{name:'filesystem.write_file',arguments:{path:path.join(c.out,'x'),text:'x'}});assert.equal(r.result.isError,true);assert.equal(r.result.structuredContent.veor.decision,'REVIEW');assert.deepEqual(marks(c),['filesystem.read_file']);});
 
