@@ -42,16 +42,26 @@ Read `docs/THREAT_MODEL.md` and `docs/SECURITY_MATRIX.md` before citing this pro
 - Host sandbox: Linux Bubblewrap when `bwrap` starts; macOS Seatbelt when `sandbox-exec` starts; otherwise process-only, including Windows. No gVisor or microVM.
 - MCP transport: hand-written stdio JSON-RPC adapter for testing; **not** advertised as complete MCP 2026-07-28 / official SDK v2 conformance.
 
-**Status:** `0.4.0-dev.5` developer preview · MIT · Node.js ≥ 22 · Linux, macOS, and Windows.
+**Status:** `0.4.0-dev.6` developer preview · MIT · Node.js ≥ 22 · Linux, macOS, and Windows.
 
-## Install (≤2 commands)
+## Install
+
+From the GitHub release tarball (same bytes as this tag):
+
+```bash
+npm install -g https://github.com/winterbim/veor/releases/download/v0.4.0-dev.6/veor-runtime-0.4.0-dev.6.tgz
+veor sandbox-info
+```
+
+From the repository:
 
 ```bash
 git clone https://github.com/winterbim/veor.git && cd veor
+npm ci
 npm run demo
 ```
 
-No runtime packages to install beyond Node itself. Full gate: `npm run check` (61 tests).
+Runtime dependency: `@modelcontextprotocol/sdk` pinned at `1.30.0` (`npm ci` installs it). Full gate: `npm run check`.
 
 ## Live demo (not a mock)
 

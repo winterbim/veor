@@ -1,0 +1,47 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install Linux sandbox tools
+        run: sudo apt-get update && sudo apt-get install -y bubblewrap build-essential
+      - name: Install
+        run: npm ci
+      - name: Gate
+        run: npm run check && npm run demo && npm run verify && npm run self && npm run verify:self
+      - name: Pack
+        run: npm pack --ignore-scripts && sha256sum veor-runtime-*.tgz > SHA256SUMS
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            veor-runtime-*.tgz SHA256SUMS \
+            --title "${GITHUB_REF_NAME} — developer preview" \
+            --notes-file RELEASE_NOTES.md \
+            --prerelease \
+            --verify-tag
+      - name: npm publish when token is present
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_TOKEN is unset. GitHub release is the install path."
+            exit 0
+          fi
+          npm publish --access public --provenance

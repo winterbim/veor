@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0-dev.6 — 2026-09-23
+
+- Installable release tarball on the GitHub release. `npm ci` is required: the official MCP SDK is a runtime dependency.
+- Tag push packs the module, writes SHA-256, and attaches both to the prerelease. npmjs publish runs only when `NPM_TOKEN` is set.
+
 ## 0.4.0-dev.5 — 2026-09-23
 
 - The gate, demo, and self-check run on Linux, macOS, and Windows. CI is a matrix of those three.

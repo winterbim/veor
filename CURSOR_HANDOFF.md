@@ -1,4 +1,4 @@
-# Cursor Handoff — VEOR 0.4.0-dev.5
+# Cursor Handoff — VEOR 0.4.0-dev.6
 
 This file is the authoritative continuation point when opening the repository in Cursor.
 

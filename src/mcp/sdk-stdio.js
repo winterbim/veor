@@ -112,7 +112,7 @@ function blocked(decision) {
 }
 
 const server = new Server(
-  { name: 'veor-gateway', version: '0.4.0-dev.5' },
+  { name: 'veor-gateway', version: '0.4.0-dev.6' },
   {
     capabilities: { tools: {} },
     instructions: `VEOR policy ${policy.digest.slice(0, 12)} is active. Official SDK transport; authority stays in the decision kernel.`,
